@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import Layout from '../components/Layout'
 import PageTitle from '../components/PageTitle'
 import SectionTitle from '../components/SectionTitle'
-// import { data } from './data'
 
 const Home: NextPage = () => {
   const [pasien, setPasien] = useState([])
@@ -20,7 +19,7 @@ const Home: NextPage = () => {
   }
 
   useEffect(() => {
-    getAllData();
+    getAllData()
   }, [])
 
   return (
@@ -29,6 +28,9 @@ const Home: NextPage = () => {
       <Layout>
         <SectionTitle>Dashboard</SectionTitle>
         <div className="mt-4">
+          <div className="mb-4">
+            <button className="btn btn-primary btn-sm">Tambah Data</button>
+          </div>
           <div className="overflow-x-auto">
             <div className="overflow-x-auto">
               <table className="table-compact table w-full">
@@ -52,7 +54,7 @@ const Home: NextPage = () => {
                         <td>{dat.NamaPasien}</td>
                         <td>{dat.Alamat}</td>
                         <td>{dat.TempatLahir}</td>
-                        <td>{dat.TanggalLahir}</td>
+                        <td>{dat.TanggalLahir.substring(0, 10)}</td>
                         <td>{dat.NamaKepalaKeluarga}</td>
                         <td>
                           {dat.JenisKelamin === 'L' ? 'Laki-laki' : 'Perempuan'}
