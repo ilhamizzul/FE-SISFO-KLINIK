@@ -6,6 +6,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "axios": "^0.26.0",
     "daisyui": "^2.2.2",
     "next": "latest",
     "react": "^17.0.2",
