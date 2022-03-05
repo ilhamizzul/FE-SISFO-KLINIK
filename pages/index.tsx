@@ -1,6 +1,6 @@
 import axios from 'axios'
 import type { NextPage } from 'next'
-import React, { ChangeEvent, useEffect, useState } from 'react'
+import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 
 import Form from '../components/Form'
 import Input from '../components/Input'
@@ -15,28 +15,43 @@ import Select from '../components/Select'
 const Home: NextPage = () => {
   const [pasien, setPasien] = useState([])
   const [name, setName] = useState<string>()
-  const [alamat, setAlamat] = useState('')
-  const [tempatLahir, setTempatLahir] = useState('')
-  const [tanggalLahir, setTanggalLahir] = useState('')
-  const [kepalaKeluarga, setKepalaKeluarga] = useState('')
-  const [jenisKelamin, setJenisKelamin] = useState('L')
+  const [alamat, setAlamat] = useState<string>()
+  const [tempatLahir, setTempatLahir] = useState<string>()
+  const [tanggalLahir, setTanggalLahir] = useState<string>()
+  const [kepalaKeluarga, setKepalaKeluarga] = useState<string>()
+  const [jenisKelamin, setJenisKelamin] = useState<string>('L')
+  const [data, setData] = useState<[]>()
 
-  const getAllData = () => {
+  type Data = {
+    Pages: number
+    Data: object
+  }
+
+  type Pasien = {
+    NamaPasien: String
+    Alamat: String
+    TempatLahir: String
+    TanggalLahir: String
+    NamaKepalaKeluarga: String
+    JenisKelamin: String
+  }
+  
+  const getAllData = (): void => {
     axios('https://apis-klinik.fanzru.dev/api/pasien')
       .then((res) => {
         setPasien(res.data.value[0].Data)
+        setData(res.data.value)
+        // console.log(res.data.value)
       })
       .catch((err) => {
         console.log(err)
       })
   }
-  
-  const addPasien = (e: any) => {
+
+  const addPasien = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     const date = tanggalLahir ? new Date(tanggalLahir).toISOString() : ''
-
-    console.log(jenisKelamin)
 
     axios
       .post('https://apis-klinik.fanzru.dev/api/pasien/add', {
@@ -87,7 +102,7 @@ const Home: NextPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {pasien.map((data: any, i: number) => {
+                  {pasien.map((data: Pasien, i: number) => {
                     return (
                       <tr key={i}>
                         <th>{i + 1}</th>
@@ -130,74 +145,83 @@ const Home: NextPage = () => {
               </table>
             </div>
           </div>
+          <div className="btn-group mt-3">
+            {data?.map((page: Data, i: number) => {
+              return (
+                <button key={i} className="btn btn-sm">
+                  {page.Pages}
+                </button>
+              )
+            })}
+          </div>
         </div>
       </Layout>
       <Modal title={'Tambah Data Pasien'} id={'my-modal'}>
-        <Form>
-          <LabelForm>Nama</LabelForm>
-          <Input
-            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              setName(e.target.value)
-            }}
-          />
-        </Form>
-        <Form>
-          <LabelForm>Alamat</LabelForm>
-          <Input
-            onChange={(e: any) => {
-              setAlamat(e.target.value)
-            }}
-          />
-        </Form>
-        <Form>
-          <LabelForm>Tempat Lahir</LabelForm>
-          <Input
-            onChange={(e: any) => {
-              setTempatLahir(e.target.value)
-            }}
-          />
-        </Form>
-        <Form>
-          <LabelForm>Tanggal Lahir</LabelForm>
-          <input
-            type="date"
-            className="input input-bordered input-sm w-full"
-            onChange={(e: any) => {
-              setTanggalLahir(e.target.value)
-            }}
-          />
-        </Form>
-        <Form>
-          <LabelForm>Nama Kepala Keluarga</LabelForm>
-          <Input
-            onChange={(e: any) => {
-              setKepalaKeluarga(e.target.value)
-            }}
-          />
-        </Form>
-        <Form>
-          <LabelForm>Jenis Kelamin</LabelForm>
-          <Select
-            onChange={(e: any) => {
-              setJenisKelamin(e.target.value)
-            }}
-            name="jenis_kelamin"
-            defaultValue="L"
-          >
-            <option value={'L'}>Laki-laki</option>
-            <option value={'P'}>Perempuan</option>
-          </Select>
-        </Form>
-        <ModalAction>
-          <label htmlFor="my-modal" className="btn btn-accent btn-sm">
-            Kembali
-          </label>
-          <label htmlFor="my-modal">
-            <button className="btn btn-primary btn-sm" onClick={addPasien}>
-              Tambah Data
-            </button>
-          </label>
-        </ModalAction>
+        <form onSubmit={addPasien}>
+          <Form>
+            <LabelForm>Nama</LabelForm>
+            <Input
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                setName(e.target.value)
+              }}
+            />
+          </Form>
+          <Form>
+            <LabelForm>Alamat</LabelForm>
+            <Input
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                setAlamat(e.target.value)
+              }}
+            />
+          </Form>
+          <Form>
+            <LabelForm>Tempat Lahir</LabelForm>
+            <Input
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                setTempatLahir(e.target.value)
+              }}
+            />
+          </Form>
+          <Form>
+            <LabelForm>Tanggal Lahir</LabelForm>
+            <input
+              type="date"
+              className="input input-bordered input-sm w-full"
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                setTanggalLahir(e.target.value)
+              }}
+            />
+          </Form>
+          <Form>
+            <LabelForm>Nama Kepala Keluarga</LabelForm>
+            <Input
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                setKepalaKeluarga(e.target.value)
+              }}
+            />
+          </Form>
+          <Form>
+            <LabelForm>Jenis Kelamin</LabelForm>
+            <Select
+              onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+                setJenisKelamin(e.target.value)
+              }}
+            >
+              <option value={'L'}>Laki-laki</option>
+              <option value={'P'}>Perempuan</option>
+            </Select>
+          </Form>
+          <ModalAction>
+            <label htmlFor="my-modal" className="btn btn-accent btn-sm">
+              Kembali
+            </label>
+            <label htmlFor="my-modal">
+              <button className="btn btn-primary btn-sm" type="submit">
+                Tambah Data
+              </button>
+            </label>
+          </ModalAction>
+        </form>
       </Modal>
     </>
   )
