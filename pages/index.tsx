@@ -13,7 +13,6 @@ import SectionTitle from '../components/SectionTitle'
 import Select from '../components/Select'
 
 const Home: NextPage = () => {
-  const [pasien, setPasien] = useState([])
   const [name, setName] = useState<string>()
   const [alamat, setAlamat] = useState<string>()
   const [tempatLahir, setTempatLahir] = useState<string>()
@@ -28,21 +27,10 @@ const Home: NextPage = () => {
     Data: any[]
   }
 
-  type Pasien = {
-    NamaPasien: String
-    Alamat: String
-    TempatLahir: String
-    TanggalLahir: String
-    NamaKepalaKeluarga: String
-    JenisKelamin: String
-  }
-
   const getAllData = (): void => {
     axios('https://apis-klinik.fanzru.dev/api/pasien')
       .then((res) => {
-        setPasien(res.data.value[currentPage].Data)
         setData(res.data.value)
-        // console.log(res.data.value)
       })
       .catch((err) => {
         console.log(err)
@@ -72,7 +60,7 @@ const Home: NextPage = () => {
   }
 
   const pagination = (tes: number) => {
-    setCurrentPage(tes-1)
+    setCurrentPage(tes - 1)
     getAllData()
   }
 
@@ -87,10 +75,12 @@ const Home: NextPage = () => {
       <Layout>
         <SectionTitle>Dashboard</SectionTitle>
         <div className="mt-4">
-          <div className="mb-4">
+          <div className="mb-4 space-x-2">
             <label className="btn btn-primary btn-sm" htmlFor={'my-modal'}>
               Tambah Data
             </label>
+            {/* onClick={exportData} */}
+            <button className="btn btn-secondary btn-sm">Export Data</button>
           </div>
           <div className="overflow-x-auto">
             <div className="overflow-x-auto">
@@ -108,93 +98,50 @@ const Home: NextPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {/* {pasien.map((data: Pasien, i: number) => {
-                    return (
-                      <tr key={i}>
-                        <th>{i + 1}</th>
-                        <td>{data.NamaPasien}</td>
-                        <td>{data.Alamat}</td>
-                        <td>{data.TempatLahir}</td>
-                        <td>{data.TanggalLahir.substring(0, 10)}</td>
-                        <td>{data.NamaKepalaKeluarga}</td>
-                        <td>
-                          {data.JenisKelamin === 'L'
-                            ? 'Laki-laki'
-                            : 'Perempuan'}
-                        </td>
-                        <td>
-                          <div className="flex items-center justify-center space-x-2">
-                            <label
-                              className="btn btn-warning btn-xs"
-                              htmlFor={'my-modal'}
-                            >
-                              Detail
-                            </label>
-                            <label
-                              className="btn btn-secondary btn-xs"
-                              htmlFor={'my-modal'}
-                            >
-                              Edit
-                            </label>
-                            <label
-                              className="btn btn-accent btn-xs"
-                              htmlFor={'my-modal'}
-                            >
-                              Hapus
-                            </label>
-                          </div>
-                        </td>
-                      </tr>
-                    )
-                  })} */}
                   {data
                     ?.filter((page: Data) => {
                       return page.Pages == currentPage + 1
                     })
                     .map((page: Data) => {
-                      return (
-                        <>
-                          {page.Data.map((tes, i) => {
-                            return (
-                              <tr key={i}>
-                                <th>{i + 1}</th>
-                                <td>{tes.NamaPasien}</td>
-                                <td>{tes.Alamat}</td>
-                                <td>{tes.TempatLahir}</td>
-                                <td>{tes.TanggalLahir.substring(0, 10)}</td>
-                                <td>{tes.NamaKepalaKeluarga}</td>
-                                <td>
-                                  {tes.JenisKelamin === 'L'
-                                    ? 'Laki-laki'
-                                    : 'Perempuan'}
-                                </td>
-                                <td>
-                                  <div className="flex items-center justify-center space-x-2">
-                                    <label
-                                      className="btn btn-warning btn-xs"
-                                      htmlFor={'my-modal'}
-                                    >
-                                      Detail
-                                    </label>
-                                    <label
-                                      className="btn btn-secondary btn-xs"
-                                      htmlFor={'my-modal'}
-                                    >
-                                      Edit
-                                    </label>
-                                    <label
-                                      className="btn btn-accent btn-xs"
-                                      htmlFor={'my-modal'}
-                                    >
-                                      Hapus
-                                    </label>
-                                  </div>
-                                </td>
-                              </tr>
-                            )
-                          })}
-                        </>
-                      )
+                      return page.Data.map((tes, i) => {
+                        return (
+                          <tr key={i}>
+                            <th>{i + 1}</th>
+                            <td>{tes.NamaPasien}</td>
+                            <td>{tes.Alamat}</td>
+                            <td>{tes.TempatLahir}</td>
+                            <td>{tes.TanggalLahir.substring(0, 10)}</td>
+                            <td>{tes.NamaKepalaKeluarga}</td>
+                            <td>
+                              {tes.JenisKelamin === 'L'
+                                ? 'Laki-laki'
+                                : 'Perempuan'}
+                            </td>
+                            <td>
+                              <div className="flex items-center justify-center space-x-2">
+                                <label
+                                  className="btn btn-warning btn-xs"
+                                  htmlFor={'my-modal'}
+                                >
+                                  Detail
+                                </label>
+                                <label
+                                  className="btn btn-secondary btn-xs"
+                                  htmlFor={'my-modal'}
+                                >
+                                  Edit
+                                </label>
+                                <label
+                                  className="btn btn-accent btn-xs"
+                                  htmlFor={'my-modal'}
+                                >
+                                  Hapus
+                                </label>
+                              </div>
+                            </td>
+                          </tr>
+                        )
+                      })
                     })}
                 </tbody>
               </table>
@@ -205,7 +152,9 @@ const Home: NextPage = () => {
               return (
                 <>
                   <button
-                    className={`btn btn-sm ${currentPage+1 == page.Pages ? 'btn-active' : ''}`}
+                    className={`btn btn-sm ${
+                      currentPage + 1 == page.Pages ? 'btn-active' : ''
+                    }`}
                     key={i}
                     onClick={() => pagination(page.Pages)}
                   >
