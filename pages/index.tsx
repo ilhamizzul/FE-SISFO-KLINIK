@@ -21,10 +21,11 @@ const Home: NextPage = () => {
   const [kepalaKeluarga, setKepalaKeluarga] = useState<string>()
   const [jenisKelamin, setJenisKelamin] = useState<string>('L')
   const [data, setData] = useState<[]>()
+  const [currentPage, setCurrentPage] = useState<number>(0)
 
   type Data = {
     Pages: number
-    Data: object
+    Data: any[]
   }
 
   type Pasien = {
@@ -35,11 +36,11 @@ const Home: NextPage = () => {
     NamaKepalaKeluarga: String
     JenisKelamin: String
   }
-  
+
   const getAllData = (): void => {
     axios('https://apis-klinik.fanzru.dev/api/pasien')
       .then((res) => {
-        setPasien(res.data.value[0].Data)
+        setPasien(res.data.value[currentPage].Data)
         setData(res.data.value)
         // console.log(res.data.value)
       })
@@ -68,6 +69,11 @@ const Home: NextPage = () => {
       .catch((err) => {
         console.log(err)
       })
+  }
+
+  const pagination = (tes: number) => {
+    setCurrentPage(tes-1)
+    getAllData()
   }
 
   useEffect(() => {
@@ -102,7 +108,7 @@ const Home: NextPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {pasien.map((data: Pasien, i: number) => {
+                  {/* {pasien.map((data: Pasien, i: number) => {
                     return (
                       <tr key={i}>
                         <th>{i + 1}</th>
@@ -140,17 +146,72 @@ const Home: NextPage = () => {
                         </td>
                       </tr>
                     )
-                  })}
+                  })} */}
+                  {data
+                    ?.filter((page: Data) => {
+                      return page.Pages == currentPage + 1
+                    })
+                    .map((page: Data, i: number) => {
+                      return (
+                        <>
+                          {page.Data.map((tes, i) => {
+                            return (
+                              <tr key={i}>
+                                <th>{i + 1}</th>
+                                <td>{tes.NamaPasien}</td>
+                                <td>{tes.Alamat}</td>
+                                <td>{tes.TempatLahir}</td>
+                                <td>{tes.TanggalLahir.substring(0, 10)}</td>
+                                <td>{tes.NamaKepalaKeluarga}</td>
+                                <td>
+                                  {tes.JenisKelamin === 'L'
+                                    ? 'Laki-laki'
+                                    : 'Perempuan'}
+                                </td>
+                                <td>
+                                  <div className="flex items-center justify-center space-x-2">
+                                    <label
+                                      className="btn btn-warning btn-xs"
+                                      htmlFor={'my-modal'}
+                                    >
+                                      Detail
+                                    </label>
+                                    <label
+                                      className="btn btn-secondary btn-xs"
+                                      htmlFor={'my-modal'}
+                                    >
+                                      Edit
+                                    </label>
+                                    <label
+                                      className="btn btn-accent btn-xs"
+                                      htmlFor={'my-modal'}
+                                    >
+                                      Hapus
+                                    </label>
+                                  </div>
+                                </td>
+                              </tr>
+                            )
+                          })}
+                        </>
+                      )
+                    })}
                 </tbody>
               </table>
             </div>
           </div>
-          <div className="btn-group mt-3">
+          <div className="btn-group mt-4">
             {data?.map((page: Data, i: number) => {
               return (
-                <button key={i} className="btn btn-sm">
-                  {page.Pages}
-                </button>
+                <>
+                  <button
+                    className={`btn btn-sm ${currentPage+1 == page.Pages ? 'btn-active' : ''}`}
+                    key={i}
+                    onClick={() => pagination(page.Pages)}
+                  >
+                    {page.Pages}
+                  </button>
+                </>
               )
             })}
           </div>
