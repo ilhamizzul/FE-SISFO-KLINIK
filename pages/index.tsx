@@ -151,7 +151,7 @@ const Home: NextPage = () => {
                     ?.filter((page: Data) => {
                       return page.Pages == currentPage + 1
                     })
-                    .map((page: Data, i: number) => {
+                    .map((page: Data) => {
                       return (
                         <>
                           {page.Data.map((tes, i) => {
