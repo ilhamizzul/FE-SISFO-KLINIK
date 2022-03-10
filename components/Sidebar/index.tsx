@@ -1,7 +1,12 @@
-import { HiOutlineHome } from 'react-icons/hi'
+import { HiHome, HiTrash } from 'react-icons/hi'
 import { FaRegHospital } from 'react-icons/fa'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 const Sidebar = () => {
+  const router = useRouter()
+  const urlString = router.pathname
+
   return (
     <div className="drawer-side">
       <label htmlFor="my-drawer-2" className="drawer-overlay" />
@@ -14,10 +19,20 @@ const Sidebar = () => {
           </div>
         </li>
         <li>
-          <a className="active">
-            <HiOutlineHome />
-            Dashboard
-          </a>
+          <Link href={'/'} passHref>
+            <a className={urlString == '/' ? 'active' : ''}>
+              <HiHome />
+              Dashboard
+            </a>
+          </Link>
+        </li>
+        <li>
+          <Link href={'recycle'} passHref>
+            <a className={urlString == '/recycle' ? 'active' : ''}>
+              <HiTrash />
+              Recycle
+            </a>
+          </Link>
         </li>
       </ul>
     </div>
