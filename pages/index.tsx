@@ -1,7 +1,7 @@
 import axios from 'axios'
 import type { NextPage } from 'next'
-import { useRouter } from 'next/router'
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
 
 import Form from '../components/Form'
 import Input from '../components/Input'
@@ -23,26 +23,24 @@ const Home: NextPage = () => {
   const [data, setData] = useState<[]>()
   const [currentPage, setCurrentPage] = useState<number>(0)
   const [idPemeriksaan, setIdPemeriksaan] = useState<number>()
+  const [isLoading, setIsLoading] = useState<boolean>(true)
 
-  const router = useRouter()
   type Data = {
     Pages: number
     Data: any[]
   }
 
-  const getAllData = (): void => {
-    axios('https://apis-klinik.fanzru.dev/api/pasien')
-      .then((res) => {
-        setData(res.data.value)
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+  const getAllData = async () => {
+    try {
+      const res = await axios('https://apis-klinik.fanzru.dev/api/pasien')
+      setData(res.data.value)
+      setIsLoading(false)
+    } catch (err) {
+      console.log(err)
+    }
   }
 
-  const addPasien = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-
+  const addPasien = () => {
     const date = tanggalLahir ? new Date(tanggalLahir).toISOString() : ''
 
     axios
@@ -54,11 +52,19 @@ const Home: NextPage = () => {
         NamaKepalaKeluarga: kepalaKeluarga,
         JenisKelamin: jenisKelamin,
       })
-      .then((res) => {
-        console.log(res)
+      .then(() => {
+        getAllData()
+        toast.success('Data berhasil ditambahkan!')
       })
       .catch((err) => {
+        getAllData()
+        toast.error('Data gagal ditambahkan!')
         console.log(err)
+        setName('')
+        setAlamat('')
+        setTempatLahir('')
+        setTanggalLahir('')
+        setKepalaKeluarga('')
       })
   }
 
@@ -69,9 +75,11 @@ const Home: NextPage = () => {
       })
       .then(() => {
         getAllData()
+        toast.success('Data pasien berhasil dihapus!')
       })
-      .catch((err) => {
-        console.log(err)
+      .catch(() => {
+        getAllData()
+        toast.error('Data pasien gagal dihapus!')
       })
   }
 
@@ -114,55 +122,62 @@ const Home: NextPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {data
-                    ?.filter((page: Data) => {
-                      return page.Pages == currentPage + 1
-                    })
-                    .map((page: Data) => {
-                      return page.Data.map((tes, i) => {
-                        return (
-                          <tr key={i}>
-                            <th>{i + 1}</th>
-                            <td>{tes.NamaPasien}</td>
-                            <td>{tes.Alamat}</td>
-                            <td>{tes.TempatLahir}</td>
-                            <td>{tes.TanggalLahir.substring(0, 10)}</td>
-                            <td>{tes.NamaKepalaKeluarga}</td>
-                            <td>
-                              {tes.JenisKelamin === 'L'
-                                ? 'Laki-laki'
-                                : 'Perempuan'}
-                            </td>
-                            <td>
-                              <div className="flex items-center justify-center space-x-2">
-                                <label
-                                  className="btn btn-warning btn-xs"
-                                  htmlFor={'my-modal'}
-                                >
-                                  Detail
-                                </label>
-                                <label
-                                  className="btn btn-secondary btn-xs"
-                                  htmlFor={'my-modal'}
-                                >
-                                  Edit
-                                </label>
-                                <label
-                                  className="btn btn-accent btn-xs"
-                                  htmlFor={'modal-hapus'}
-                                  onClick={() =>
-                                    // deletePasien(tes.IdPemeriksaan)
-                                    setIdPemeriksaan(tes.IdPemeriksaan)
-                                  }
-                                >
-                                  Hapus
-                                </label>
-                              </div>
-                            </td>
-                          </tr>
-                        )
+                  {isLoading ? (
+                    <tr>
+                      <td colSpan={7} className={'text-center'}>
+                        Loading
+                      </td>
+                    </tr>
+                  ) : (
+                    data
+                      ?.filter((page: Data) => {
+                        return page.Pages == currentPage + 1
                       })
-                    })}
+                      .map((page: Data) => {
+                        return page.Data.map((tes, i) => {
+                          return (
+                            <tr key={i}>
+                              <th>{i + 1}</th>
+                              <td>{tes.NamaPasien}</td>
+                              <td>{tes.Alamat}</td>
+                              <td>{tes.TempatLahir}</td>
+                              <td>{tes.TanggalLahir.substring(0, 10)}</td>
+                              <td>{tes.NamaKepalaKeluarga}</td>
+                              <td>
+                                {tes.JenisKelamin === 'L'
+                                  ? 'Laki-laki'
+                                  : 'Perempuan'}
+                              </td>
+                              <td>
+                                <div className="flex items-center justify-center space-x-2">
+                                  <label
+                                    className="btn btn-warning btn-xs"
+                                    htmlFor={'my-modal'}
+                                  >
+                                    Detail
+                                  </label>
+                                  <label
+                                    className="btn btn-secondary btn-xs"
+                                    htmlFor={'my-modal'}
+                                  >
+                                    Edit
+                                  </label>
+                                  <label
+                                    className="btn btn-accent btn-xs"
+                                    htmlFor={'modal-hapus'}
+                                    onClick={() =>
+                                      setIdPemeriksaan(tes.IdPemeriksaan)
+                                    }
+                                  >
+                                    Hapus
+                                  </label>
+                                </div>
+                              </td>
+                            </tr>
+                          )
+                        })
+                      })
+                  )}
                 </tbody>
               </table>
             </div>
@@ -187,73 +202,79 @@ const Home: NextPage = () => {
         </div>
       </Layout>
       <Modal title={'Tambah Data Pasien'} id={'my-modal'}>
-        <form onSubmit={addPasien}>
-          <Form>
-            <LabelForm>Nama</LabelForm>
-            <Input
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                setName(e.target.value)
-              }}
-            />
-          </Form>
-          <Form>
-            <LabelForm>Alamat</LabelForm>
-            <Input
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                setAlamat(e.target.value)
-              }}
-            />
-          </Form>
-          <Form>
-            <LabelForm>Tempat Lahir</LabelForm>
-            <Input
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                setTempatLahir(e.target.value)
-              }}
-            />
-          </Form>
-          <Form>
-            <LabelForm>Tanggal Lahir</LabelForm>
-            <input
-              type="date"
-              className="input input-bordered input-sm w-full"
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                setTanggalLahir(e.target.value)
-              }}
-            />
-          </Form>
-          <Form>
-            <LabelForm>Nama Kepala Keluarga</LabelForm>
-            <Input
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                setKepalaKeluarga(e.target.value)
-              }}
-            />
-          </Form>
-          <Form>
-            <LabelForm>Jenis Kelamin</LabelForm>
-            <Select
-              onChange={(e: ChangeEvent<HTMLSelectElement>) => {
-                setJenisKelamin(e.target.value)
-              }}
-            >
-              <option value={'L'}>Laki-laki</option>
-              <option value={'P'}>Perempuan</option>
-            </Select>
-          </Form>
-          <ModalAction>
-            <label htmlFor="my-modal" className="btn btn-accent btn-sm">
-              Kembali
-            </label>
-            <label htmlFor="my-modal">
-              <button className="btn btn-primary btn-sm" type="submit">
-                Tambah Data
-              </button>
-            </label>
-          </ModalAction>
-        </form>
+        <Form>
+          <LabelForm>Nama</LabelForm>
+          <Input
+            value={name}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              setName(e.target.value)
+            }}
+          />
+        </Form>
+        <Form>
+          <LabelForm>Alamat</LabelForm>
+          <Input
+            value={alamat}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              setAlamat(e.target.value)
+            }}
+          />
+        </Form>
+        <Form>
+          <LabelForm>Tempat Lahir</LabelForm>
+          <Input
+            value={tempatLahir}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              setTempatLahir(e.target.value)
+            }}
+          />
+        </Form>
+        <Form>
+          <LabelForm>Tanggal Lahir</LabelForm>
+          <input
+            type="date"
+            className="input input-bordered input-sm w-full"
+            value={tanggalLahir}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              setTanggalLahir(e.target.value)
+            }}
+          />
+        </Form>
+        <Form>
+          <LabelForm>Nama Kepala Keluarga</LabelForm>
+          <Input
+            value={kepalaKeluarga}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              setKepalaKeluarga(e.target.value)
+            }}
+          />
+        </Form>
+        <Form>
+          <LabelForm>Jenis Kelamin</LabelForm>
+          <Select
+            onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+              setJenisKelamin(e.target.value)
+            }}
+          >
+            <option value={'L'}>Laki-laki</option>
+            <option value={'P'}>Perempuan</option>
+          </Select>
+        </Form>
+        <ModalAction>
+          <label htmlFor="my-modal" className="btn btn-accent btn-sm">
+            Kembali
+          </label>
+          <label
+            htmlFor="my-modal"
+            className="btn btn-primary btn-sm"
+            onClick={addPasien}
+          >
+            Tambah Data
+          </label>
+        </ModalAction>
       </Modal>
       <Modal title={'Hapus Data Pasien'} id={'modal-hapus'}>
+        <span>Yakin ingin menghapus data pasien?</span>
         <ModalAction>
           <label htmlFor="modal-hapus" className="btn btn-accent btn-sm">
             Kembali
@@ -263,10 +284,9 @@ const Home: NextPage = () => {
             onClick={() => {
               deletePasien(idPemeriksaan!)
             }}
+            className="btn btn-primary btn-sm"
           >
-            <button className="btn btn-primary btn-sm" type="submit">
-              Hapus Data
-            </button>
+            Hapus Data
           </label>
         </ModalAction>
       </Modal>
