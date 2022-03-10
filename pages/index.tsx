@@ -1,5 +1,6 @@
 import axios from 'axios'
 import type { NextPage } from 'next'
+import { useRouter } from 'next/router'
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 
 import Form from '../components/Form'
@@ -21,7 +22,9 @@ const Home: NextPage = () => {
   const [jenisKelamin, setJenisKelamin] = useState<string>('L')
   const [data, setData] = useState<[]>()
   const [currentPage, setCurrentPage] = useState<number>(0)
+  const [idPemeriksaan, setIdPemeriksaan] = useState<number>()
 
+  const router = useRouter()
   type Data = {
     Pages: number
     Data: any[]
@@ -53,6 +56,19 @@ const Home: NextPage = () => {
       })
       .then((res) => {
         console.log(res)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+
+  const deletePasien = (id: number) => {
+    axios
+      .post('https://apis-klinik.fanzru.dev/api/pasien/hapus', {
+        idPemeriksaan: id,
+      })
+      .then(() => {
+        getAllData()
       })
       .catch((err) => {
         console.log(err)
@@ -133,7 +149,11 @@ const Home: NextPage = () => {
                                 </label>
                                 <label
                                   className="btn btn-accent btn-xs"
-                                  htmlFor={'my-modal'}
+                                  htmlFor={'modal-hapus'}
+                                  onClick={() =>
+                                    // deletePasien(tes.IdPemeriksaan)
+                                    setIdPemeriksaan(tes.IdPemeriksaan)
+                                  }
                                 >
                                   Hapus
                                 </label>
@@ -232,6 +252,23 @@ const Home: NextPage = () => {
             </label>
           </ModalAction>
         </form>
+      </Modal>
+      <Modal title={'Hapus Data Pasien'} id={'modal-hapus'}>
+        <ModalAction>
+          <label htmlFor="modal-hapus" className="btn btn-accent btn-sm">
+            Kembali
+          </label>
+          <label
+            htmlFor="modal-hapus"
+            onClick={() => {
+              deletePasien(idPemeriksaan!)
+            }}
+          >
+            <button className="btn btn-primary btn-sm" type="submit">
+              Hapus Data
+            </button>
+          </label>
+        </ModalAction>
       </Modal>
     </>
   )
