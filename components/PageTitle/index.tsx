@@ -1,7 +1,7 @@
 import Head from 'next/head'
-import React from 'react'
+import React, { ReactNode } from 'react'
 
-const PageTitle = ({ children }:any) => {
+const PageTitle = ({ children }: {children: ReactNode}) => {
   return (
     <Head>
       <title>Sisfo Klinik | {children}</title>

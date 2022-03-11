@@ -1,4 +1,3 @@
-import React from 'react'
 import { HiOutlineHome } from 'react-icons/hi'
 import { FaRegHospital } from 'react-icons/fa'
 
