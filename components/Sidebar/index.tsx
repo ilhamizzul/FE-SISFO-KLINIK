@@ -27,7 +27,7 @@ const Sidebar = () => {
           </Link>
         </li>
         <li>
-          <Link href={'recycle'} passHref>
+          <Link href={'/recycle'} passHref>
             <a className={urlString == '/recycle' ? 'active' : ''}>
               <HiTrash />
               Recycle

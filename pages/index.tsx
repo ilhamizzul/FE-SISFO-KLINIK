@@ -1,6 +1,7 @@
 import axios from 'axios'
+import exportFromJSON from 'export-from-json'
 import type { NextPage } from 'next'
-import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react'
+import React, { ChangeEvent, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
 import Form from '../components/Form'
@@ -20,7 +21,7 @@ const Home: NextPage = () => {
   const [tanggalLahir, setTanggalLahir] = useState<string>()
   const [kepalaKeluarga, setKepalaKeluarga] = useState<string>()
   const [jenisKelamin, setJenisKelamin] = useState<string>('L')
-  const [data, setData] = useState<[]>()
+  const [dataPasien, setDataPasien] = useState<[]>()
   const [currentPage, setCurrentPage] = useState<number>(0)
   const [idPemeriksaan, setIdPemeriksaan] = useState<number>()
   const [isLoading, setIsLoading] = useState<boolean>(true)
@@ -33,7 +34,7 @@ const Home: NextPage = () => {
   const getAllData = async () => {
     try {
       const res = await axios('https://apis-klinik.fanzru.dev/api/pasien')
-      setData(res.data.value)
+      setDataPasien(res.data.value)
       setIsLoading(false)
     } catch (err) {
       console.log(err)
@@ -85,12 +86,35 @@ const Home: NextPage = () => {
 
   const pagination = (tes: number) => {
     setCurrentPage(tes - 1)
-    getAllData()
   }
 
   useEffect(() => {
     getAllData()
   }, [])
+
+  let allData: Array<object> = []
+
+  dataPasien?.map((page: Data) => {
+    return page.Data.map((tes, i) => {
+      allData.push(tes)
+    })
+  })
+
+  const handleExport = () => {
+    const data = allData
+    const fileName = 'Data-Pasien'
+    const exportType = 'xls'
+    const fields = [
+      'Alamat',
+      'NamaPasien',
+      'TempatLahir',
+      'TanggalLahir',
+      'NamaKepalaKeluarga',
+      'IdPemeriksaan',
+      'JenisKelamin',
+    ]
+    exportFromJSON({ data, fileName, exportType, fields })
+  }
 
   return (
     <>
@@ -103,8 +127,9 @@ const Home: NextPage = () => {
             <label className="btn btn-primary btn-sm" htmlFor={'my-modal'}>
               Tambah Data
             </label>
-            {/* onClick={exportData} */}
-            <button className="btn btn-secondary btn-sm">Export Data</button>
+            <button className="btn btn-secondary btn-sm" onClick={handleExport}>
+              Export Data
+            </button>
           </div>
           <div className="overflow-x-auto">
             <div className="overflow-x-auto">
@@ -129,7 +154,7 @@ const Home: NextPage = () => {
                       </td>
                     </tr>
                   ) : (
-                    data
+                    dataPasien
                       ?.filter((page: Data) => {
                         return page.Pages == currentPage + 1
                       })
@@ -150,12 +175,12 @@ const Home: NextPage = () => {
                               </td>
                               <td>
                                 <div className="flex items-center justify-center space-x-2">
-                                  <label
+                                  {/* <label
                                     className="btn btn-warning btn-xs"
                                     htmlFor={'my-modal'}
                                   >
                                     Detail
-                                  </label>
+                                  </label> */}
                                   <label
                                     className="btn btn-secondary btn-xs"
                                     htmlFor={'my-modal'}
@@ -183,7 +208,7 @@ const Home: NextPage = () => {
             </div>
           </div>
           <div className="btn-group mt-4">
-            {data?.map((page: Data, i: number) => {
+            {dataPasien?.map((page: Data, i: number) => {
               return (
                 <>
                   <button

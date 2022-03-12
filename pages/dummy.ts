@@ -1,4 +1,4 @@
-export let data: any = {
+export let dummy: any = {
   value: [
     {
       IdPemeriksaan: 1,
