@@ -1,7 +1,8 @@
-import { HiHome, HiTrash } from 'react-icons/hi'
-import { FaRegHospital } from 'react-icons/fa'
+import { HiTrash } from 'react-icons/hi'
+import { FaRegHospital, FaUserInjured } from 'react-icons/fa'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { ImStatsDots } from 'react-icons/im'
 
 const Sidebar = () => {
   const router = useRouter()
@@ -21,8 +22,16 @@ const Sidebar = () => {
         <li>
           <Link href={'/'} passHref>
             <a className={urlString == '/' ? 'active' : ''}>
-              <HiHome />
+              <ImStatsDots />
               Dashboard
+            </a>
+          </Link>
+        </li>
+        <li>
+          <Link href={'/pasien'} passHref>
+            <a className={urlString == '/pasien' ? 'active' : ''}>
+              <FaUserInjured />
+              Data Pasien
             </a>
           </Link>
         </li>
