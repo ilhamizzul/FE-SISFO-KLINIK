@@ -9,7 +9,7 @@ const Home = () => {
       <PageTitle>Dashboard</PageTitle>
       <Layout>
         <SectionTitle>Dashboard</SectionTitle>
-        <div className="mt-4">aasd</div>
+        <div className="mt-4">Ini adalah halaman Dashboard</div>
       </Layout>
     </>
   )
