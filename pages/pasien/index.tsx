@@ -31,6 +31,15 @@ const Home: NextPage = () => {
     Data: any[]
   }
 
+  type Pasien = {
+    IdPemeriksaan: number
+    Alamat: string
+    TempatLahir: string
+    TanggalLahir: string
+    NamaKepalaKeluarga: string
+    JenisKelamin: string
+  }
+
   const getAllData = async () => {
     try {
       const res = await axios('https://apis-klinik.fanzru.dev/api/pasien')
@@ -67,6 +76,43 @@ const Home: NextPage = () => {
         setTanggalLahir('')
         setKepalaKeluarga('')
       })
+  }
+
+  const editPasien = () => {
+    const date = tanggalLahir ? new Date(tanggalLahir).toISOString() : ''
+
+    axios
+      .post('https://apis-klinik.fanzru.dev/api/pasien/edit', {
+        idPemeriksaan: idPemeriksaan,
+        Alamat: alamat,
+        TempatLahir: tempatLahir,
+        TanggalLahir: date,
+        NamaKepalaKeluarga: kepalaKeluarga,
+        JenisKelamin: jenisKelamin,
+      })
+      .then(() => {
+        getAllData()
+        toast.success('Data berhasil ditambahkan!')
+      })
+      .catch((err) => {
+        getAllData()
+        toast.error('Data gagal ditambahkan!')
+        console.log(err)
+        setName('')
+        setAlamat('')
+        setTempatLahir('')
+        setTanggalLahir('')
+        setKepalaKeluarga('')
+      })
+  }
+
+  const handleEdit = (data: Pasien) => {
+    setIdPemeriksaan(data.IdPemeriksaan)
+    setAlamat(data.Alamat)
+    setTempatLahir(data.TempatLahir)
+    setTanggalLahir(data.TanggalLahir.substring(0, 10))
+    setKepalaKeluarga(data.NamaKepalaKeluarga)
+    setJenisKelamin(data.JenisKelamin)
   }
 
   const deletePasien = (id: number) => {
@@ -183,7 +229,8 @@ const Home: NextPage = () => {
                                   </label> */}
                                   <label
                                     className="btn btn-secondary btn-xs"
-                                    htmlFor={'my-modal'}
+                                    htmlFor={'modal-edit'}
+                                    onClick={() => handleEdit(tes)}
                                   >
                                     Edit
                                   </label>
@@ -295,6 +342,70 @@ const Home: NextPage = () => {
             onClick={addPasien}
           >
             Tambah Data
+          </label>
+        </ModalAction>
+      </Modal>
+      <Modal title={'Ubah Data Pasien'} id={'modal-edit'}>
+        <Form>
+          <LabelForm>Alamat</LabelForm>
+          <Input
+            value={alamat}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              setAlamat(e.target.value)
+            }}
+          />
+        </Form>
+        <Form>
+          <LabelForm>Tempat Lahir</LabelForm>
+          <Input
+            value={tempatLahir}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              setTempatLahir(e.target.value)
+            }}
+          />
+        </Form>
+        <Form>
+          <LabelForm>Tanggal Lahir</LabelForm>
+          <input
+            type="date"
+            className="input input-bordered input-sm w-full"
+            value={tanggalLahir}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              setTanggalLahir(e.target.value)
+            }}
+          />
+        </Form>
+        <Form>
+          <LabelForm>Nama Kepala Keluarga</LabelForm>
+          <Input
+            value={kepalaKeluarga}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              setKepalaKeluarga(e.target.value)
+            }}
+          />
+        </Form>
+        <Form>
+          <LabelForm>Jenis Kelamin</LabelForm>
+          <Select
+            onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+              setJenisKelamin(e.target.value)
+            }}
+            value={jenisKelamin}
+          >
+            <option value={'L'}>Laki-laki</option>
+            <option value={'P'}>Perempuan</option>
+          </Select>
+        </Form>
+        <ModalAction>
+          <label htmlFor="modal-edit" className="btn btn-accent btn-sm">
+            Kembali
+          </label>
+          <label
+            htmlFor="modal-edit"
+            className="btn btn-primary btn-sm"
+            onClick={editPasien}
+          >
+            Edit Data
           </label>
         </ModalAction>
       </Modal>

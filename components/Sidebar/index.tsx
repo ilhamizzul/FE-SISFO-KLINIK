@@ -1,4 +1,4 @@
-import { HiTrash } from 'react-icons/hi'
+import { HiTrash, HiOutlineClipboardList } from 'react-icons/hi'
 import { FaRegHospital, FaUserInjured } from 'react-icons/fa'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -31,40 +31,22 @@ const Sidebar = () => {
             </a>
           </Link>
         </li>
-        {/* <div className="collapse rounded-md" tabIndex={0}>
-          <input type="checkbox" className="peer" />
-          <div className="collapse-title  peer-checked:bg-primary peer-checked:text-secondary-content">
-            <span className="flex">
-              <FaUserInjured />
-              Data Pasien
-            </span>
-          </div>
-          <div className="collapse-content  peer-checked:text-secondary-content">
-            <li>
-              <Link href={'/'} passHref>
-                <a className={urlString == '/' ? 'active' : ''}>
-                  <ImStatsDots />
-                  Dashboard
-                </a>
-              </Link>
-            </li>
-          </div>
-        </div> */}
-        <li onClick={collapse} className={isOPen ? 'bordered' : ''}>
+        {/* <li onClick={collapse} className={isOPen ? 'bordered' : ''}> */}
+        <li onClick={collapse}>
           <a>
             <FaUserInjured />
-            Pasien
+            <span>Pasien</span>
           </a>
         </li>
-        <li className={isOPen ? 'ml-2 block' : 'hidden'}>
+        <li className={isOPen ? 'ml-3 block' : 'hidden'}>
           <Link href={'/pasien'} passHref>
-            <a>
-              <FaUserInjured />
+            <a className={urlString == '/pasien' ? 'active' : ''}>
+              <HiOutlineClipboardList />
               Data Pasien
             </a>
           </Link>
         </li>
-        <li>
+        <li className={isOPen ? 'ml-3 block' : 'hidden'}>
           <Link href={'/recycle'} passHref>
             <a className={urlString == '/recycle' ? 'active' : ''}>
               <HiTrash />
