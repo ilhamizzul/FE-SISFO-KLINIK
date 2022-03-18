@@ -4,19 +4,24 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { ImStatsDots } from 'react-icons/im'
 import { useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { changeSidebar, selectSidebarValue } from '../../redux/sidebarSlice'
 
 const Sidebar = () => {
   const router = useRouter()
+  const dispatch = useDispatch()
   const urlString = router.pathname
   const [isOPen, setIsOPen] = useState(false)
+  const sidebarValue = useSelector(selectSidebarValue)
   const collapse = () => {
     setIsOPen(!isOPen)
+    dispatch(changeSidebar(!sidebarValue))
   }
+
   return (
     <div className="drawer-side">
       <label htmlFor="my-drawer-2" className="drawer-overlay" />
       <ul className="menu w-80 space-y-1 overflow-y-auto bg-base-200 p-4 text-base-content">
-        {/* Sidebar content here */}
         <li>
           <div className="flex">
             <FaRegHospital className="text-2xl" />
@@ -31,14 +36,13 @@ const Sidebar = () => {
             </a>
           </Link>
         </li>
-        {/* <li onClick={collapse} className={isOPen ? 'bordered' : ''}> */}
         <li onClick={collapse}>
           <a>
             <FaUserInjured />
             <span>Pasien</span>
           </a>
         </li>
-        <li className={isOPen ? 'ml-3 block' : 'hidden'}>
+        <li className={sidebarValue ? 'ml-3 block' : 'hidden'}>
           <Link href={'/pasien'} passHref>
             <a className={urlString == '/pasien' ? 'active' : ''}>
               <HiOutlineClipboardList />
@@ -46,7 +50,7 @@ const Sidebar = () => {
             </a>
           </Link>
         </li>
-        <li className={isOPen ? 'ml-3 block' : 'hidden'}>
+        <li className={sidebarValue ? 'ml-3 block' : 'hidden'}>
           <Link href={'/recycle'} passHref>
             <a className={urlString == '/recycle' ? 'active' : ''}>
               <HiTrash />
