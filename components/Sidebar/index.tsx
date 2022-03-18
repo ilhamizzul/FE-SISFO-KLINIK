@@ -1,12 +1,27 @@
-import { HiOutlineHome } from 'react-icons/hi'
-import { FaRegHospital } from 'react-icons/fa'
+import { HiTrash, HiOutlineClipboardList } from 'react-icons/hi'
+import { FaRegHospital, FaUserInjured } from 'react-icons/fa'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { ImStatsDots } from 'react-icons/im'
+import { useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { changeSidebar, selectSidebarValue } from '../../redux/sidebarSlice'
 
 const Sidebar = () => {
+  const router = useRouter()
+  const dispatch = useDispatch()
+  const urlString = router.pathname
+  const [isOPen, setIsOPen] = useState(false)
+  const sidebarValue = useSelector(selectSidebarValue)
+  const collapse = () => {
+    setIsOPen(!isOPen)
+    dispatch(changeSidebar(!sidebarValue))
+  }
+
   return (
     <div className="drawer-side">
       <label htmlFor="my-drawer-2" className="drawer-overlay" />
       <ul className="menu w-80 space-y-1 overflow-y-auto bg-base-200 p-4 text-base-content">
-        {/* Sidebar content here */}
         <li>
           <div className="flex">
             <FaRegHospital className="text-2xl" />
@@ -14,10 +29,34 @@ const Sidebar = () => {
           </div>
         </li>
         <li>
-          <a className="active">
-            <HiOutlineHome />
-            Dashboard
+          <Link href={'/'} passHref>
+            <a className={urlString == '/' ? 'active' : ''}>
+              <ImStatsDots />
+              Dashboard
+            </a>
+          </Link>
+        </li>
+        <li onClick={collapse}>
+          <a>
+            <FaUserInjured />
+            <span>Pasien</span>
           </a>
+        </li>
+        <li className={sidebarValue ? 'ml-3 block' : 'hidden'}>
+          <Link href={'/pasien'} passHref>
+            <a className={urlString == '/pasien' ? 'active' : ''}>
+              <HiOutlineClipboardList />
+              Data Pasien
+            </a>
+          </Link>
+        </li>
+        <li className={sidebarValue ? 'ml-3 block' : 'hidden'}>
+          <Link href={'/recycle'} passHref>
+            <a className={urlString == '/recycle' ? 'active' : ''}>
+              <HiTrash />
+              Recycle
+            </a>
+          </Link>
         </li>
       </ul>
     </div>
