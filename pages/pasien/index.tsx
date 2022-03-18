@@ -390,10 +390,18 @@ const Home: NextPage = () => {
             onChange={(e: ChangeEvent<HTMLSelectElement>) => {
               setJenisKelamin(e.target.value)
             }}
-            value={jenisKelamin}
           >
-            <option value={'L'}>Laki-laki</option>
-            <option value={'P'}>Perempuan</option>
+            {jenisKelamin == 'L' ? (
+              <>
+                <option value={'L'}>Laki-laki</option>
+                <option value={'P'}>Perempuan</option>
+              </>
+            ) : (
+              <>
+                <option value={'L'}>Laki-laki</option>
+                <option value={'P'}>Perempuan</option>
+              </>
+            )}
           </Select>
         </Form>
         <ModalAction>
