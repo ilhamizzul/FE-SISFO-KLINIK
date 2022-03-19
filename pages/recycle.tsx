@@ -37,7 +37,7 @@ const Recycle = () => {
   const activatePasien = (id: number) => {
     axios
       .post('https://apis-klinik.fanzru.dev/api/pasien/aktivasi', {
-        idPemeriksaan: id,
+        Id: id,
       })
       .then(() => {
         getDataRecycle()
@@ -106,9 +106,7 @@ const Recycle = () => {
                                   <label
                                     className="btn btn-secondary btn-xs"
                                     htmlFor={'modal-activate'}
-                                    onClick={() =>
-                                      setIdPemeriksaan(tes.IdPemeriksaan)
-                                    }
+                                    onClick={() => setIdPemeriksaan(tes.Id)}
                                   >
                                     Aktivasi
                                   </label>
