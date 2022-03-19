@@ -33,7 +33,7 @@ const Navbar = () => {
               <img src="https://api.lorem.space/image/face?hash=33791" />
             </div>
           </div>
-          <span className="font-semibold">Admin</span>
+          <span className="font-semibold hidden lg:block">Admin</span>
         </div>
       </div>
     </div>
