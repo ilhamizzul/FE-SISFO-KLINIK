@@ -32,7 +32,7 @@ const Home: NextPage = () => {
   }
 
   type Pasien = {
-    IdPemeriksaan: number
+    Id: number
     Alamat: string
     TempatLahir: string
     TanggalLahir: string
@@ -83,7 +83,7 @@ const Home: NextPage = () => {
 
     axios
       .post('https://apis-klinik.fanzru.dev/api/pasien/edit', {
-        idPemeriksaan: idPemeriksaan,
+        Id: idPemeriksaan,
         Alamat: alamat,
         TempatLahir: tempatLahir,
         TanggalLahir: date,
@@ -107,7 +107,7 @@ const Home: NextPage = () => {
   }
 
   const handleEdit = (data: Pasien) => {
-    setIdPemeriksaan(data.IdPemeriksaan)
+    setIdPemeriksaan(data.Id)
     setAlamat(data.Alamat)
     setTempatLahir(data.TempatLahir)
     setTanggalLahir(data.TanggalLahir.substring(0, 10))
@@ -118,7 +118,7 @@ const Home: NextPage = () => {
   const deletePasien = (id: number) => {
     axios
       .post('https://apis-klinik.fanzru.dev/api/pasien/hapus', {
-        idPemeriksaan: id,
+        Id: id,
       })
       .then(() => {
         getAllData()
@@ -156,7 +156,7 @@ const Home: NextPage = () => {
       'TempatLahir',
       'TanggalLahir',
       'NamaKepalaKeluarga',
-      'IdPemeriksaan',
+      'Id',
       'JenisKelamin',
     ]
     exportFromJSON({ data, fileName, exportType, fields })
@@ -237,9 +237,7 @@ const Home: NextPage = () => {
                                   <label
                                     className="btn btn-accent btn-xs"
                                     htmlFor={'modal-hapus'}
-                                    onClick={() =>
-                                      setIdPemeriksaan(tes.IdPemeriksaan)
-                                    }
+                                    onClick={() => setIdPemeriksaan(tes.Id)}
                                   >
                                     Hapus
                                   </label>
