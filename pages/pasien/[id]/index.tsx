@@ -26,6 +26,7 @@ const DetailPemeriksaan = () => {
   const [hasilPemeriksaan, setHasilPemeriksaan] = useState<string>()
   const [diagnosis, setDiagnosis] = useState<string>()
   const [terapi, setTerapi] = useState<string>()
+  const [idDetail, setIdDetail] = useState<number>()
 
   const getDetailPasien = async () => {
     try {
@@ -75,6 +76,25 @@ const DetailPemeriksaan = () => {
       })
   }
 
+  const deleteDetail = (id: number) => {
+    console.log(id)
+
+    axios
+      .delete(`https://apis-klinik.fanzru.dev/api/pemeriksaan/hapus?id=${id}`)
+      .then((res) => {
+        getDetailPasien()
+        toast.success('Data berhasil dihapus!')
+      })
+      .catch((err) => {
+        console.log(err)
+        toast.error('Data gagal dihapus!')
+      })
+  }
+
+  const pagination = (tes: number) => {
+    setCurrentPage(tes - 1)
+  }
+
   let allData: Array<object> = []
 
   detailPasien?.map((page: Data) => {
@@ -110,7 +130,6 @@ const DetailPemeriksaan = () => {
 
       <Layout>
         <SectionTitle>Data Pasien : {pasien?.NamaPasien}</SectionTitle>
-        <div className="mt-4"></div>
         <div className="mt-4">
           <div className="mb-4 space-x-2">
             <label className="btn btn-primary btn-sm" htmlFor={'modal-tambah'}>
@@ -178,6 +197,9 @@ const DetailPemeriksaan = () => {
                                   <label
                                     className="btn btn-accent btn-xs rounded-l-none"
                                     htmlFor={'modal-hapus'}
+                                    onClick={() => {
+                                      setIdDetail(tes.Id)
+                                    }}
                                   >
                                     <HiTrash />
                                   </label>
@@ -191,6 +213,23 @@ const DetailPemeriksaan = () => {
                 </tbody>
               </table>
             </div>
+          </div>
+          <div className="btn-group mt-4">
+            {detailPasien?.map((page: Data, i: number) => {
+              return (
+                <>
+                  <button
+                    className={`btn btn-sm ${
+                      currentPage + 1 == page.Pages ? 'btn-active' : ''
+                    }`}
+                    key={i}
+                    onClick={() => pagination(page.Pages)}
+                  >
+                    {page.Pages}
+                  </button>
+                </>
+              )
+            })}
           </div>
         </div>
       </Layout>
@@ -265,7 +304,13 @@ const DetailPemeriksaan = () => {
           <label htmlFor="modal-hapus" className="btn btn-accent btn-sm">
             Kembali
           </label>
-          <label htmlFor="modal-hapus" className="btn btn-primary btn-sm">
+          <label
+            htmlFor="modal-hapus"
+            className="btn btn-primary btn-sm"
+            onClick={() => {
+              deleteDetail(idDetail!)
+            }}
+          >
             Hapus Data
           </label>
         </ModalAction>
