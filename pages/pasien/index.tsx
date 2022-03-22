@@ -1,7 +1,9 @@
 import axios from 'axios'
 import exportFromJSON from 'export-from-json'
 import type { NextPage } from 'next'
+import Link from 'next/link'
 import React, { ChangeEvent, useEffect, useState } from 'react'
+import { HiEye, HiPencilAlt, HiTrash } from 'react-icons/hi'
 import { toast } from 'react-toastify'
 
 import Form from '../../components/Form'
@@ -13,6 +15,7 @@ import ModalAction from '../../components/ModalAction'
 import PageTitle from '../../components/PageTitle'
 import SectionTitle from '../../components/SectionTitle'
 import Select from '../../components/Select'
+import { Data, Pasien } from '../../types/pasien'
 
 const Home: NextPage = () => {
   const [name, setName] = useState<string>()
@@ -25,20 +28,6 @@ const Home: NextPage = () => {
   const [currentPage, setCurrentPage] = useState<number>(0)
   const [idPemeriksaan, setIdPemeriksaan] = useState<number>()
   const [isLoading, setIsLoading] = useState<boolean>(true)
-
-  type Data = {
-    Pages: number
-    Data: any[]
-  }
-
-  type Pasien = {
-    Id: number
-    Alamat: string
-    TempatLahir: string
-    TanggalLahir: string
-    NamaKepalaKeluarga: string
-    JenisKelamin: string
-  }
 
   const getAllData = async () => {
     try {
@@ -219,27 +208,26 @@ const Home: NextPage = () => {
                                   ? 'Laki-laki'
                                   : 'Perempuan'}
                               </td>
-                              <td>
-                                <div className="flex items-center justify-center space-x-2">
-                                  {/* <label
-                                    className="btn btn-warning btn-xs"
-                                    htmlFor={'my-modal'}
-                                  >
-                                    Detail
-                                  </label> */}
+                              <td className="items-center justify-center">
+                                <div className="flex items-center justify-center">
+                                  <Link href={`/pasien/${tes.Id}`} passHref>
+                                    <label className="btn btn-warning btn-xs rounded-r-none">
+                                      <HiEye />
+                                    </label>
+                                  </Link>
                                   <label
-                                    className="btn btn-secondary btn-xs"
+                                    className="btn btn-secondary btn-xs rounded-none"
                                     htmlFor={'modal-edit'}
                                     onClick={() => handleEdit(tes)}
                                   >
-                                    Edit
+                                    <HiPencilAlt />
                                   </label>
                                   <label
-                                    className="btn btn-accent btn-xs"
+                                    className="btn btn-accent btn-xs rounded-l-none"
                                     htmlFor={'modal-hapus'}
                                     onClick={() => setIdPemeriksaan(tes.Id)}
                                   >
-                                    Hapus
+                                    <HiTrash />
                                   </label>
                                 </div>
                               </td>
@@ -396,8 +384,8 @@ const Home: NextPage = () => {
               </>
             ) : (
               <>
-                <option value={'L'}>Laki-laki</option>
                 <option value={'P'}>Perempuan</option>
+                <option value={'L'}>Laki-laki</option>
               </>
             )}
           </Select>
