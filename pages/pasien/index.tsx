@@ -28,10 +28,10 @@ const Home: NextPage = () => {
   const [currentPage, setCurrentPage] = useState<number>(0)
   const [idPemeriksaan, setIdPemeriksaan] = useState<number>()
   const [isLoading, setIsLoading] = useState<boolean>(true)
-
+  
   const getAllData = async () => {
     try {
-      const res = await axios('https://apis-klinik.fanzru.dev/api/pasien')
+      const res = await axios(`${process.env.NEXT_PUBLIC_URL_HOST}/api/pasien`)
       setDataPasien(res.data.value)
       setIsLoading(false)
     } catch (err) {
@@ -43,7 +43,7 @@ const Home: NextPage = () => {
     const date = tanggalLahir ? new Date(tanggalLahir).toISOString() : ''
 
     axios
-      .post('https://apis-klinik.fanzru.dev/api/pasien/add', {
+      .post(`${process.env.NEXT_PUBLIC_URL_HOST}/pasien/add`, {
         NamaPasien: name,
         Alamat: alamat,
         TempatLahir: tempatLahir,
@@ -71,7 +71,7 @@ const Home: NextPage = () => {
     const date = tanggalLahir ? new Date(tanggalLahir).toISOString() : ''
 
     axios
-      .post('https://apis-klinik.fanzru.dev/api/pasien/edit', {
+      .post(`${process.env.NEXT_PUBLIC_URL_HOST}/api/pasien/edit`, {
         Id: idPemeriksaan,
         Alamat: alamat,
         TempatLahir: tempatLahir,
@@ -106,7 +106,7 @@ const Home: NextPage = () => {
 
   const deletePasien = (id: number) => {
     axios
-      .post('https://apis-klinik.fanzru.dev/api/pasien/hapus', {
+      .post(`${process.env.NEXT_PUBLIC_URL_HOST}/api/pasien/hapus`, {
         Id: id,
       })
       .then(() => {
@@ -152,7 +152,7 @@ const Home: NextPage = () => {
   }
 
   return (
-    <>
+    <> 
       <PageTitle>Pasien</PageTitle>
 
       <Layout>

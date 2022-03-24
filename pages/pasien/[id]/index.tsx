@@ -14,7 +14,7 @@ import Modal from '../../../components/Modal'
 import ModalAction from '../../../components/ModalAction'
 import PageTitle from '../../../components/PageTitle'
 import SectionTitle from '../../../components/SectionTitle'
-import { Data, Pasien } from '../../../types/pasien'
+import { Data, Pasien, DetailPasien } from '../../../types/pasien'
 
 const DetailPemeriksaan = () => {
   const router = useRouter()
@@ -31,7 +31,7 @@ const DetailPemeriksaan = () => {
   const getDetailPasien = async () => {
     try {
       const pasien = await axios(
-        `https://apis-klinik.fanzru.dev/api/pemeriksaan/pasien?id=${data.id}`
+        `${process.env.NEXT_PUBLIC_URL_HOST}/api/pemeriksaan/pasien?id=${data.id}`
       )
       setDetailPasien(pasien.data.value)
       setIsLoading(false)
@@ -41,7 +41,7 @@ const DetailPemeriksaan = () => {
   }
 
   const getPasien = () => {
-    axios(`https://apis-klinik.fanzru.dev/api/pasien/detail?id=${data.id}`)
+    axios(`${process.env.NEXT_PUBLIC_URL_HOST}/api/pasien/detail?id=${data.id}`)
       .then((res) => {
         setPasien(res.data.value)
       })
@@ -55,7 +55,7 @@ const DetailPemeriksaan = () => {
     const idPasien = data.id as string
 
     axios
-      .post('https://apis-klinik.fanzru.dev/api/pemeriksaan/add', {
+      .post(`${process.env.NEXT_PUBLIC_URL_HOST}/api/pemeriksaan/add`, {
         TanggalPemeriksaan: date,
         HasilPemeriksaan: hasilPemeriksaan,
         Diagnosis: diagnosis,
@@ -76,11 +76,46 @@ const DetailPemeriksaan = () => {
       })
   }
 
-  const deleteDetail = (id: number) => {
-    console.log(id)
+  const editDetail = () => {
+    const date = new Date().toISOString()
 
     axios
-      .delete(`https://apis-klinik.fanzru.dev/api/pemeriksaan/hapus?id=${id}`)
+      .post(`${process.env.NEXT_PUBLIC_URL_HOST}/api/pemeriksaan/edit`, {
+        TanggalPemeriksaan: date,
+        HasilPemeriksaan: hasilPemeriksaan,
+        Diagnosis: diagnosis,
+        Terapi: terapi,
+        Id: idDetail,
+      })
+      .then(() => {
+        getDetailPasien()
+        toast.success('Data berhasil diubah!')
+        setHasilPemeriksaan('')
+        setDiagnosis('')
+        setTerapi('')
+      })
+      .catch((err) => {
+        getDetailPasien()
+        toast.error('Data gagal diubah!')
+        console.log(err)
+        setHasilPemeriksaan('')
+        setDiagnosis('')
+        setTerapi('')
+      })
+  }
+
+  const handleEdit = (data: DetailPasien) => {
+    setIdDetail(data.Id)
+    setHasilPemeriksaan(data.HasilPemeriksaan)
+    setDiagnosis(data.Diagnosis)
+    setTerapi(data.Terapi)
+  }
+
+  const deleteDetail = (id: number) => {
+    axios
+      .delete(
+        `${process.env.NEXT_PUBLIC_URL_HOST}/api/pemeriksaan/hapus?id=${id}`
+      )
       .then((res) => {
         getDetailPasien()
         toast.success('Data berhasil dihapus!')
@@ -191,6 +226,7 @@ const DetailPemeriksaan = () => {
                                   <label
                                     className="btn btn-secondary btn-xs rounded-none"
                                     htmlFor={'modal-edit'}
+                                    onClick={() => handleEdit(tes)}
                                   >
                                     <HiPencilAlt />
                                   </label>
@@ -278,22 +314,43 @@ const DetailPemeriksaan = () => {
       <Modal title={'Ubah Data Pasien'} id={'modal-edit'}>
         <Form>
           <LabelForm>Hasil Pemeriksaan</LabelForm>
-          <Input />
+          <Input
+            value={hasilPemeriksaan}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              setHasilPemeriksaan(e.target.value)
+            }}
+          />
         </Form>
         <Form>
           <LabelForm>Diagnosis</LabelForm>
-          <Input />
+          <Input
+            value={diagnosis}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              setDiagnosis(e.target.value)
+            }}
+          />
         </Form>
         <Form>
           <LabelForm>Terapi</LabelForm>
-          <Input />
+          <Input
+            value={terapi}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              setTerapi(e.target.value)
+            }}
+          />
         </Form>
 
         <ModalAction>
           <label htmlFor="modal-edit" className="btn btn-accent btn-sm">
             Kembali
           </label>
-          <label htmlFor="modal-edit" className="btn btn-primary btn-sm">
+          <label
+            htmlFor="modal-edit"
+            className="btn btn-primary btn-sm"
+            onClick={() => {
+              editDetail()
+            }}
+          >
             Edit Data
           </label>
         </ModalAction>
