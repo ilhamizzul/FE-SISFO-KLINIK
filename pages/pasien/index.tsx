@@ -41,9 +41,9 @@ const Home: NextPage = () => {
 
   const addPasien = () => {
     const date = tanggalLahir ? new Date(tanggalLahir).toISOString() : ''
-
+    
     axios
-      .post(`${process.env.NEXT_PUBLIC_URL_HOST}/pasien/add`, {
+      .post(`${process.env.NEXT_PUBLIC_URL_HOST}/api/pasien/add`, {
         NamaPasien: name,
         Alamat: alamat,
         TempatLahir: tempatLahir,
@@ -54,6 +54,11 @@ const Home: NextPage = () => {
       .then(() => {
         getAllData()
         toast.success('Data berhasil ditambahkan!')
+        setName('')
+        setAlamat('')
+        setTempatLahir('')
+        setTanggalLahir('')
+        setKepalaKeluarga('')
       })
       .catch((err) => {
         getAllData()
