@@ -7,6 +7,7 @@ import Layout from '../../components/Layout'
 import PageTitle from '../../components/PageTitle'
 import SectionTitle from '../../components/SectionTitle'
 import { Data, Obat } from '../../types/pasien'
+import { exportData } from '../../utils/exportData'
 
 const Obat = () => {
   const [currentPage, setCurrentPage] = useState<number>(0)
@@ -17,7 +18,6 @@ const Obat = () => {
     try {
       const res = await axios(`${process.env.NEXT_PUBLIC_URL_HOST}/api/obat`)
       setDataObat(res.data.value)
-      console.log(res.data.value)
       setIsLoading(false)
     } catch (err) {
       console.log(err)
@@ -31,11 +31,13 @@ const Obat = () => {
   })
 
   const handleExport = () => {
-    const data = allData
-    const fileName = 'Data-Pasien'
-    const exportType = 'xls'
-    const fields = ['Id', 'Kode', 'Nama', 'HargaJual', 'Sisa']
-    exportFromJSON({ data, fileName, exportType, fields })
+    exportData(allData, 'Data-Obat', [
+      'Id',
+      'Kode',
+      'Nama',
+      'HargaJual',
+      'Sisa',
+    ])
   }
 
   useEffect(() => {
@@ -53,7 +55,9 @@ const Obat = () => {
             <label className="btn btn-primary btn-sm" htmlFor={'my-modal'}>
               Tambah Data
             </label>
-            <button className="btn btn-secondary btn-sm" onClick={handleExport}>Export Data</button>
+            <button className="btn btn-secondary btn-sm" onClick={handleExport}>
+              Export Data
+            </button>
           </div>
           <div className="overflow-x-auto">
             <div className="overflow-x-auto">
