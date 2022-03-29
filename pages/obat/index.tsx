@@ -1,18 +1,27 @@
 import axios from 'axios'
-import exportFromJSON from 'export-from-json'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import { HiEye, HiPencilAlt, HiTrash } from 'react-icons/hi'
+import { toast } from 'react-toastify'
+
+import Form from '../../components/Form'
+import Input from '../../components/Input'
+import LabelForm from '../../components/LabelForm'
 import Layout from '../../components/Layout'
+import Modal from '../../components/Modal'
+import ModalAction from '../../components/ModalAction'
 import PageTitle from '../../components/PageTitle'
 import SectionTitle from '../../components/SectionTitle'
-import { Data, Obat } from '../../types/pasien'
+import { Obat } from '../../types/pasien'
 import { exportData } from '../../utils/exportData'
+import { rupiah } from '../../utils/formatRupiah'
 
 const Obat = () => {
-  const [currentPage, setCurrentPage] = useState<number>(0)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [dataObat, setDataObat] = useState<[]>()
+  const [kodeObat, setKodeObat] = useState<string>()
+  const [namaObat, setNamaObat] = useState<string>()
+  const [hargaJual, setHargaJual] = useState<number>(0)
 
   const getAllData = async () => {
     try {
@@ -21,6 +30,26 @@ const Obat = () => {
       setIsLoading(false)
     } catch (err) {
       console.log(err)
+    }
+  }
+
+  const addObat = async () => {
+    try {
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_URL_HOST}/api/obat`,
+        {
+          Kode: kodeObat,
+          Nama: namaObat,
+          HargaJual: hargaJual,
+        }
+      )
+      toast.success('Data berhasil ditambahkan!')
+      getAllData()
+      resetState()
+    } catch (err) {
+      console.log(err)
+      toast.error('Data gagal ditambahkan!')
+      resetState()
     }
   }
 
@@ -38,6 +67,12 @@ const Obat = () => {
       'HargaJual',
       'Sisa',
     ])
+  }
+
+  const resetState = () => {
+    setKodeObat('')
+    setNamaObat('')
+    setHargaJual(0)
   }
 
   useEffect(() => {
@@ -68,7 +103,7 @@ const Obat = () => {
                     <th>Kode</th>
                     <th>Nama</th>
                     <th>Harga Jual</th>
-                    <th>Sisa</th>
+                    <th>Stok</th>
                     <th className="text-center">Aksi</th>
                   </tr>
                 </thead>
@@ -86,7 +121,7 @@ const Obat = () => {
                           <th>{i + 1}</th>
                           <td>{page.Kode}</td>
                           <td>{page.Nama}</td>
-                          <td>{page.HargaJual}</td>
+                          <td>{rupiah(page.HargaJual)}</td>
                           <td>{page.Sisa}</td>
                           <td className="items-center justify-center">
                             <div className="flex items-center justify-center">
@@ -121,6 +156,49 @@ const Obat = () => {
           </div>
         </div>
       </Layout>
+      <Modal title={'Tambah Data Pasien'} id={'my-modal'}>
+        <Form>
+          <LabelForm>Kode Obat</LabelForm>
+          <Input
+            value={kodeObat}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              setKodeObat(e.target.value)
+            }}
+          />
+        </Form>
+        <Form>
+          <LabelForm>Nama Obat</LabelForm>
+          <Input
+            value={namaObat}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              setNamaObat(e.target.value)
+            }}
+          />
+        </Form>
+        <Form>
+          <LabelForm>Harga Jual Obat</LabelForm>
+          <Input
+            type="number"
+            min={0}
+            value={hargaJual}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              setHargaJual(parseInt(e.target.value))
+            }}
+          />
+        </Form>
+        <ModalAction>
+          <label htmlFor="my-modal" className="btn btn-accent btn-sm">
+            Kembali
+          </label>
+          <label
+            htmlFor="my-modal"
+            className="btn btn-primary btn-sm"
+            onClick={addObat}
+          >
+            Tambah Data
+          </label>
+        </ModalAction>
+      </Modal>
     </>
   )
 }
