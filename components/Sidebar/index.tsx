@@ -96,8 +96,8 @@ const Sidebar = () => {
           }
         >
           <li className={'ml-3'}>
-            <Link href={'/pasien'} passHref>
-              <a className={urlString == '/pasien' ? 'active' : ''}>
+            <Link href={'/obat'} passHref>
+              <a className={urlString == '/obat' ? 'active' : ''}>
                 <HiOutlineClipboardList />
                 Data Obat
               </a>

@@ -22,3 +22,13 @@ export type DetailPasien = {
   StatusTransaksi: string
   IdPasien: number
 }
+
+export type Obat = {
+  Id: number
+  Kode: string
+  Nama: string
+  HargaJual: number
+  Masuk: number
+  Keluar: number
+  Sisa: number
+}
