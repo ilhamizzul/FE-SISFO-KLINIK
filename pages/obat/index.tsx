@@ -16,7 +16,7 @@ import { Obat } from '../../types/pasien'
 import { exportData } from '../../utils/exportData'
 import { rupiah } from '../../utils/formatRupiah'
 
-const Obat = () => {
+const ObatPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [dataObat, setDataObat] = useState<[]>()
   const [kodeObat, setKodeObat] = useState<string>()
@@ -33,24 +33,23 @@ const Obat = () => {
     }
   }
 
-  const addObat = async () => {
-    try {
-      const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_URL_HOST}/api/obat`,
-        {
-          Kode: kodeObat,
-          Nama: namaObat,
-          HargaJual: hargaJual,
-        }
-      )
-      toast.success('Data berhasil ditambahkan!')
-      getAllData()
-      resetState()
-    } catch (err) {
-      console.log(err)
-      toast.error('Data gagal ditambahkan!')
-      resetState()
-    }
+  const addObat = () => {
+    axios
+      .post(`${process.env.NEXT_PUBLIC_URL_HOST}/api/obat`, {
+        Kode: kodeObat,
+        Nama: namaObat,
+        HargaJual: hargaJual,
+      })
+      .then(() => {
+        toast.success('Data berhasil ditambahkan!')
+        getAllData()
+        resetState()
+      })
+      .catch((err) => {
+        console.log(err)
+        toast.error('Data gagal ditambahkan!')
+        resetState()
+      })
   }
 
   let allData: Array<object> = []
@@ -69,7 +68,7 @@ const Obat = () => {
     ])
   }
 
-  const resetState = () => {
+  const resetState = (): void => {
     setKodeObat('')
     setNamaObat('')
     setHargaJual(0)
@@ -203,4 +202,4 @@ const Obat = () => {
   )
 }
 
-export default Obat
+export default ObatPage
