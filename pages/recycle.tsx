@@ -6,21 +6,18 @@ import Modal from '../components/Modal'
 import ModalAction from '../components/ModalAction'
 import PageTitle from '../components/PageTitle'
 import SectionTitle from '../components/SectionTitle'
+import { Data } from '../types/pasien'
 
 const Recycle = () => {
   const [data, setData] = useState<[]>()
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [currentPage, setCurrentPage] = useState<number>(0)
   const [idPemeriksaan, setIdPemeriksaan] = useState<number>()
-  type Data = {
-    Pages: number
-    Data: any[]
-  }
 
   const getDataRecycle = async () => {
     try {
       const res = await axios(
-        'https://apis-klinik.fanzru.dev/api/pasien/sampah'
+        `${process.env.NEXT_PUBLIC_URL_HOST}/api/pasien/sampah`
       )
       setData(res.data.value)
       setIsLoading(false)
@@ -36,7 +33,7 @@ const Recycle = () => {
 
   const activatePasien = (id: number) => {
     axios
-      .post('https://apis-klinik.fanzru.dev/api/pasien/aktivasi', {
+      .post(`${process.env.NEXT_PUBLIC_URL_HOST}/api/pasien/aktivasi`, {
         Id: id,
       })
       .then(() => {

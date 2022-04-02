@@ -195,7 +195,11 @@ const Home: NextPage = () => {
                         return page.Data.map((tes, i) => {
                           return (
                             <tr key={i}>
-                              <th>{i + 1}</th>
+                              <th>
+                                {currentPage == 0
+                                  ? i + 1
+                                  : i + 1 + 10 * currentPage}
+                              </th>
                               <td>{tes.NamaPasien}</td>
                               <td>{tes.Alamat}</td>
                               <td>{tes.TempatLahir}</td>

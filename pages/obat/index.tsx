@@ -12,7 +12,7 @@ import Modal from '../../components/Modal'
 import ModalAction from '../../components/ModalAction'
 import PageTitle from '../../components/PageTitle'
 import SectionTitle from '../../components/SectionTitle'
-import { Obat } from '../../types/pasien'
+import { Data, Obat } from '../../types/pasien'
 import { exportData } from '../../utils/exportData'
 import { rupiah } from '../../utils/formatRupiah'
 
@@ -22,6 +22,7 @@ const ObatPage = () => {
   const [kodeObat, setKodeObat] = useState<string>()
   const [namaObat, setNamaObat] = useState<string>()
   const [hargaJual, setHargaJual] = useState<number>(0)
+  const [currentPage, setCurrentPage] = useState<number>(0)
 
   const getAllData = async () => {
     try {
@@ -54,8 +55,10 @@ const ObatPage = () => {
 
   let allData: Array<object> = []
 
-  dataObat?.map((data: Obat) => {
-    allData.push(data)
+  dataObat?.map((page: Data) => {
+    return page.Data.map((tes, i) => {
+      allData.push(tes)
+    })
   })
 
   const handleExport = () => {
@@ -66,6 +69,10 @@ const ObatPage = () => {
       'HargaJual',
       'Sisa',
     ])
+  }
+
+  const pagination = (tes: number) => {
+    setCurrentPage(tes - 1)
   }
 
   const resetState = (): void => {
@@ -114,44 +121,71 @@ const ObatPage = () => {
                       </td>
                     </tr>
                   ) : (
-                    dataObat?.map((page: Obat, i: number) => {
-                      return (
-                        <tr key={i}>
-                          <th>{i + 1}</th>
-                          <td>{page.Kode}</td>
-                          <td>{page.Nama}</td>
-                          <td>{rupiah(page.HargaJual)}</td>
-                          <td>{page.Sisa}</td>
-                          <td className="items-center justify-center">
-                            <div className="flex items-center justify-center">
-                              <Link href={`/pasien/${page.Id}`} passHref>
-                                <label className="btn btn-warning btn-xs rounded-r-none">
-                                  <HiEye />
-                                </label>
-                              </Link>
-                              <label
-                                className="btn btn-secondary btn-xs rounded-none"
-                                htmlFor={'modal-edit'}
-                                // onClick={() => handleEdit(tes)}
-                              >
-                                <HiPencilAlt />
-                              </label>
-                              <label
-                                className="btn btn-accent btn-xs rounded-l-none"
-                                htmlFor={'modal-hapus'}
-                                // onClick={() => setIdPemeriksaan(tes.Id)}
-                              >
-                                <HiTrash />
-                              </label>
-                            </div>
-                          </td>
-                        </tr>
-                      )
-                    })
+                    dataObat
+                      ?.filter((page: Data) => {
+                        return page.Pages == currentPage + 1
+                      })
+                      .map((page: Data) => {
+                        return page.Data.map((tes, i) => {
+                          return (
+                            <tr key={i}>
+                              <th>
+                                {currentPage == 0
+                                  ? i + 1
+                                  : i + 1 + 10 * currentPage}
+                              </th>
+                              <td>{tes.Kode}</td>
+                              <td>{tes.Nama}</td>
+                              <td>{rupiah(tes.HargaJual)}</td>
+                              <td>{tes.Sisa}</td>
+                              <td className="items-center justify-center">
+                                <div className="flex items-center justify-center">
+                                  <Link href={`/pasien/${tes.Id}`} passHref>
+                                    <label className="btn btn-warning btn-xs rounded-r-none">
+                                      <HiEye />
+                                    </label>
+                                  </Link>
+                                  <label
+                                    className="btn btn-secondary btn-xs rounded-none"
+                                    htmlFor={'modal-edit'}
+                                    // onClick={() => handleEdit(tes)}
+                                  >
+                                    <HiPencilAlt />
+                                  </label>
+                                  <label
+                                    className="btn btn-accent btn-xs rounded-l-none"
+                                    htmlFor={'modal-hapus'}
+                                    // onClick={() => setIdPemeriksaan(tes.Id)}
+                                  >
+                                    <HiTrash />
+                                  </label>
+                                </div>
+                              </td>
+                            </tr>
+                          )
+                        })
+                      })
                   )}
                 </tbody>
               </table>
             </div>
+          </div>
+          <div className="btn-group mt-4">
+            {dataObat?.map((page: Data, i: number) => {
+              return (
+                <>
+                  <button
+                    className={`btn btn-sm ${
+                      currentPage + 1 == page.Pages ? 'btn-active' : ''
+                    }`}
+                    key={i}
+                    onClick={() => pagination(page.Pages)}
+                  >
+                    {page.Pages}
+                  </button>
+                </>
+              )
+            })}
           </div>
         </div>
       </Layout>
