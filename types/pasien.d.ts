@@ -32,3 +32,11 @@ export type Obat = {
   Keluar: number
   Sisa: number
 }
+
+export type Transaksi = {
+  RincianObat: String
+  Jumlah: number
+  Harga: number
+  IdObat: number
+  IdPemeriksaan: number
+}

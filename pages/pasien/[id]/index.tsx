@@ -3,7 +3,8 @@ import exportFromJSON from 'export-from-json'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { ChangeEvent, useEffect, useState } from 'react'
-import { HiEye, HiPencilAlt, HiTrash } from 'react-icons/hi'
+import { FaDollarSign } from 'react-icons/fa'
+import { HiPencilAlt, HiTrash } from 'react-icons/hi'
 import { toast } from 'react-toastify'
 
 import Form from '../../../components/Form'
@@ -18,7 +19,7 @@ import { Data, Pasien, DetailPasien } from '../../../types/pasien'
 
 const DetailPemeriksaan = () => {
   const router = useRouter()
-  const data = router.query
+  const {id} = router.query
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [detailPasien, setDetailPasien] = useState<[]>()
   const [pasien, setPasien] = useState<Pasien>()
@@ -31,7 +32,7 @@ const DetailPemeriksaan = () => {
   const getDetailPasien = async () => {
     try {
       const pasien = await axios(
-        `${process.env.NEXT_PUBLIC_URL_HOST}/api/pemeriksaan/pasien?id=${data.id}`
+        `${process.env.NEXT_PUBLIC_URL_HOST}/api/pemeriksaan/pasien?id=${id}`
       )
       setDetailPasien(pasien.data.value)
       setIsLoading(false)
@@ -41,7 +42,7 @@ const DetailPemeriksaan = () => {
   }
 
   const getPasien = () => {
-    axios(`${process.env.NEXT_PUBLIC_URL_HOST}/api/pasien/detail?id=${data.id}`)
+    axios(`${process.env.NEXT_PUBLIC_URL_HOST}/api/pasien/detail?id=${id}`)
       .then((res) => {
         setPasien(res.data.value)
       })
@@ -52,7 +53,7 @@ const DetailPemeriksaan = () => {
 
   const addDetail = () => {
     const date = new Date().toISOString()
-    const idPasien = data.id as string
+    const idPasien = id as string
 
     axios
       .post(`${process.env.NEXT_PUBLIC_URL_HOST}/api/pemeriksaan/add`, {
@@ -159,6 +160,12 @@ const DetailPemeriksaan = () => {
     getPasien()
   }, [])
 
+  useEffect(() => {
+    if (!id) return
+    
+  }, [id])
+  
+
   return (
     <>
       <PageTitle>Detail Pasien</PageTitle>
@@ -218,9 +225,9 @@ const DetailPemeriksaan = () => {
                               <td>{tes.StatusTransaksi}</td>
                               <td className="items-center justify-center">
                                 <div className="flex items-center justify-center">
-                                  <Link href={`/pasien/${tes.Id}`} passHref>
+                                  <Link href={`/transaksi/${tes.Id}`} passHref>
                                     <label className="btn btn-warning btn-xs rounded-r-none">
-                                      <HiEye />
+                                      <FaDollarSign />
                                     </label>
                                   </Link>
                                   <label

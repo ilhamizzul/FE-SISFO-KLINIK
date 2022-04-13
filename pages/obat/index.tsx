@@ -12,7 +12,7 @@ import Modal from '../../components/Modal'
 import ModalAction from '../../components/ModalAction'
 import PageTitle from '../../components/PageTitle'
 import SectionTitle from '../../components/SectionTitle'
-import { Data, Obat } from '../../types/pasien'
+import { Data } from '../../types/pasien'
 import { exportData } from '../../utils/exportData'
 import { rupiah } from '../../utils/formatRupiah'
 
@@ -56,7 +56,7 @@ const ObatPage = () => {
   let allData: Array<object> = []
 
   dataObat?.map((page: Data) => {
-    return page.Data.map((tes, i) => {
+    return page.Data.map((tes) => {
       allData.push(tes)
     })
   })
