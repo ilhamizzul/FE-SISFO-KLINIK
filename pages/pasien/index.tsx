@@ -132,7 +132,7 @@ const Home: NextPage = () => {
   let allData: Array<object> = []
 
   dataPasien?.map((page: Data) => {
-    return page.Data.map((tes, i) => {
+    return page.Data.map((tes) => {
       allData.push(tes)
     })
   })

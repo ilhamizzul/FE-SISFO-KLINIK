@@ -17,14 +17,14 @@ import {
 import { Data, Obat, Transaksi } from '../../types/pasien'
 import { rupiah } from '../../utils/formatRupiah'
 
-const TransaksiObat = () => {
+const index = () => {
   const [dataObat, setDataObat] = useState<[]>()
   const [currentPage, setCurrentPage] = useState<number>(0)
   const router = useRouter()
   const { id } = router.query
   const dispatch = useDispatch()
   const obatValue = useSelector(selectObatValue)
-  const [inputSearch, setInputSearch] = useState<string>('')
+  // const [inputSearch, setInputSearch] = useState<string>('')
 
   const getAllData = async () => {
     try {
@@ -83,8 +83,8 @@ const TransaksiObat = () => {
       })
   }
 
-  const deleteTransaksi = (id: number) => {
-    dispatch(deleteObat(id))
+  const deleteTransaksi = (idTransaksi: number) => {
+    dispatch(deleteObat(idTransaksi))
   }
 
   const pagination = (tes: number) => {
@@ -105,9 +105,9 @@ const TransaksiObat = () => {
             type="text"
             className="input input-bordered input-sm"
             placeholder="search"
-            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              setInputSearch(e.target.value)
-            }}
+            // onChange={(e: ChangeEvent<HTMLInputElement>) => {
+            //   setInputSearch(e.target.value)
+            // }}
           />
         </div>
         <div className="mt-4 grid grid-cols-1 gap-y-12 md:grid-cols-3 md:gap-x-6">
@@ -242,4 +242,4 @@ const TransaksiObat = () => {
   )
 }
 
-export default TransaksiObat
+export default index

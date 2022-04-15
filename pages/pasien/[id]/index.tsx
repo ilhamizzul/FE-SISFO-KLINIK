@@ -112,12 +112,12 @@ const DetailPemeriksaan = () => {
     setTerapi(data.Terapi)
   }
 
-  const deleteDetail = (id: number) => {
+  const deleteDetail = (idPemeriksaan: number) => {
     axios
       .delete(
-        `${process.env.NEXT_PUBLIC_URL_HOST}/api/pemeriksaan/hapus?id=${id}`
+        `${process.env.NEXT_PUBLIC_URL_HOST}/api/pemeriksaan/hapus?id=${idPemeriksaan}`
       )
-      .then((res) => {
+      .then(() => {
         getDetailPasien()
         toast.success('Data berhasil dihapus!')
       })
@@ -134,7 +134,7 @@ const DetailPemeriksaan = () => {
   let allData: Array<object> = []
 
   detailPasien?.map((page: Data) => {
-    return page.Data.map((tes, i) => {
+    return page.Data.map((tes) => {
       allData.push(tes)
     })
   })
@@ -159,10 +159,6 @@ const DetailPemeriksaan = () => {
     getDetailPasien()
     getPasien()
   }, [])
-
-  useEffect(() => {
-    if (!id) return
-  }, [id])
 
   return (
     <>
