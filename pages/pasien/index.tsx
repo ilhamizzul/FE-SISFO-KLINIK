@@ -98,14 +98,15 @@ const Home: NextPage = () => {
     setJenisKelamin(data.JenisKelamin)
   }
 
-  const deletePasien = (id: number) => {
+  const deletePasien = async (id: number) => {
     axios
       .post(`${process.env.NEXT_PUBLIC_URL_HOST}/api/pasien/hapus`, {
         Id: id,
       })
-      .then(() => {
+      .then((res) => {
         getAllData()
         toast.success('Data pasien berhasil dihapus!')
+        console.log(res)
       })
       .catch((err) => {
         console.log(err)

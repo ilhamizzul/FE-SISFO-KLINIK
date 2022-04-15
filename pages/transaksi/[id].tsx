@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { useRouter } from 'next/router'
-import { ChangeEvent, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { HiOutlineMinusSm, HiPlusSm } from 'react-icons/hi'
 import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
@@ -17,14 +17,13 @@ import {
 import { Data, Obat, Transaksi } from '../../types/pasien'
 import { rupiah } from '../../utils/formatRupiah'
 
-const index = () => {
+const DetailTransaksi = () => {
   const [dataObat, setDataObat] = useState<[]>()
   const [currentPage, setCurrentPage] = useState<number>(0)
   const router = useRouter()
   const { id } = router.query
   const dispatch = useDispatch()
   const obatValue = useSelector(selectObatValue)
-  // const [inputSearch, setInputSearch] = useState<string>('')
 
   const getAllData = async () => {
     try {
@@ -105,9 +104,6 @@ const index = () => {
             type="text"
             className="input input-bordered input-sm"
             placeholder="search"
-            // onChange={(e: ChangeEvent<HTMLInputElement>) => {
-            //   setInputSearch(e.target.value)
-            // }}
           />
         </div>
         <div className="mt-4 grid grid-cols-1 gap-y-12 md:grid-cols-3 md:gap-x-6">
@@ -242,4 +238,4 @@ const index = () => {
   )
 }
 
-export default index
+export default DetailTransaksi
