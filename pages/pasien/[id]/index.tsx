@@ -3,7 +3,7 @@ import exportFromJSON from 'export-from-json'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { ChangeEvent, useEffect, useState } from 'react'
-import { FaDollarSign } from 'react-icons/fa'
+import { FaClipboardCheck, FaDollarSign } from 'react-icons/fa'
 import { HiPencilAlt, HiTrash } from 'react-icons/hi'
 import { toast } from 'react-toastify'
 
@@ -19,7 +19,7 @@ import { Data, Pasien, DetailPasien } from '../../../types/pasien'
 
 const DetailPemeriksaan = () => {
   const router = useRouter()
-  const {id} = router.query
+  const { id } = router.query
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [detailPasien, setDetailPasien] = useState<[]>()
   const [pasien, setPasien] = useState<Pasien>()
@@ -162,9 +162,7 @@ const DetailPemeriksaan = () => {
 
   useEffect(() => {
     if (!id) return
-    
   }, [id])
-  
 
   return (
     <>
@@ -191,7 +189,6 @@ const DetailPemeriksaan = () => {
                     <th>Hasil Pemeriksaan</th>
                     <th>Diagnosis</th>
                     <th>Terapi</th>
-                    <th>Status Transaksi</th>
                     <th className="text-center">Aksi</th>
                   </tr>
                 </thead>
@@ -222,14 +219,25 @@ const DetailPemeriksaan = () => {
                               <td>{tes.HasilPemeriksaan}</td>
                               <td>{tes.Diagnosis}</td>
                               <td>{tes.Terapi}</td>
-                              <td>{tes.StatusTransaksi}</td>
                               <td className="items-center justify-center">
                                 <div className="flex items-center justify-center">
-                                  <Link href={`/transaksi/${tes.Id}`} passHref>
-                                    <label className="btn btn-warning btn-xs rounded-r-none">
-                                      <FaDollarSign />
+                                  {tes.StatusTransaksi == 'sudah' ? (
+                                    <label
+                                      className="btn btn-primary btn-xs rounded-r-none"
+                                      htmlFor={'modal-transaksi'}
+                                    >
+                                      <FaClipboardCheck />
                                     </label>
-                                  </Link>
+                                  ) : (
+                                    <Link
+                                      href={`/transaksi/${tes.Id}`}
+                                      passHref
+                                    >
+                                      <label className="btn btn-warning btn-xs rounded-r-none">
+                                        <FaDollarSign />
+                                      </label>
+                                    </Link>
+                                  )}
                                   <label
                                     className="btn btn-secondary btn-xs rounded-none"
                                     htmlFor={'modal-edit'}
@@ -366,6 +374,23 @@ const DetailPemeriksaan = () => {
         <span>Yakin ingin menghapus data pasien?</span>
         <ModalAction>
           <label htmlFor="modal-hapus" className="btn btn-accent btn-sm">
+            Kembali
+          </label>
+          <label
+            htmlFor="modal-hapus"
+            className="btn btn-primary btn-sm"
+            onClick={() => {
+              deleteDetail(idDetail!)
+            }}
+          >
+            Hapus Data
+          </label>
+        </ModalAction>
+      </Modal>
+      <Modal title={'Data Transaksi'} id={'modal-transaksi'}>
+        <span>Yakin ingin menghapus data pasien?</span>
+        <ModalAction>
+          <label htmlFor="modal-transaksi" className="btn btn-accent btn-sm">
             Kembali
           </label>
           <label

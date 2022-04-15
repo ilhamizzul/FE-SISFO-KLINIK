@@ -1,8 +1,9 @@
 import axios from 'axios'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import { HiOutlineMinusSm, HiPlusSm } from 'react-icons/hi'
 import { useDispatch, useSelector } from 'react-redux'
+import { toast } from 'react-toastify'
 import Layout from '../../components/Layout'
 import PageTitle from '../../components/PageTitle'
 import SectionTitle from '../../components/SectionTitle'
@@ -14,15 +15,16 @@ import {
   minusObat,
 } from '../../redux/obatSlice'
 import { Data, Obat, Transaksi } from '../../types/pasien'
+import { rupiah } from '../../utils/formatRupiah'
 
 const TransaksiObat = () => {
   const [dataObat, setDataObat] = useState<[]>()
   const [currentPage, setCurrentPage] = useState<number>(0)
-  const [dataTransaksi, setDataTransaksi] = useState<Transaksi[]>([])
   const router = useRouter()
   const { id } = router.query
   const dispatch = useDispatch()
   const obatValue = useSelector(selectObatValue)
+  const [inputSearch, setInputSearch] = useState<string>('')
 
   const getAllData = async () => {
     try {
@@ -43,13 +45,13 @@ const TransaksiObat = () => {
     return res
   }
 
-  const addTransaksi = (data: Obat) => {
+  const addList = (data: Obat) => {
     let exist: boolean = checkExist(data)
 
     let transaksi: Transaksi = {
       RincianObat: data.Nama,
       Jumlah: 1,
-      Harga: 1,
+      Harga: data.HargaJual,
       IdObat: data.Id,
       IdPemeriksaan: parseInt(id as string),
     }
@@ -63,6 +65,22 @@ const TransaksiObat = () => {
     } else {
       dispatch(addObat(transaksi))
     }
+  }
+
+  const addTransaksi = () => {
+    axios
+      .post(
+        `${process.env.NEXT_PUBLIC_URL_HOST}/api/transaksi/${id}`,
+        obatValue
+      )
+      .then((res) => {
+        console.log(res)
+        toast.success('Data berhasil ditambahkan!')
+      })
+      .catch((err) => {
+        console.log(err)
+        toast.success('Data gagal ditambahkan!')
+      })
   }
 
   const deleteTransaksi = (id: number) => {
@@ -82,14 +100,24 @@ const TransaksiObat = () => {
       <PageTitle>Transaksi Obat</PageTitle>
       <Layout>
         <SectionTitle>Transaksi Obat</SectionTitle>
-        <div className="mt-4 w-full gap-5 lg:flex">
-          <div className="h-1/3 w-full rounded-md lg:w-1/3">
+        <div className="mt-4">
+          <input
+            type="text"
+            className="input input-bordered input-sm"
+            placeholder="search"
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              setInputSearch(e.target.value)
+            }}
+          />
+        </div>
+        <div className="mt-4 grid grid-cols-1 gap-y-12 md:grid-cols-3 md:gap-x-6">
+          <div className="col-span-1 w-full rounded-md">
             <table className="table-compact table w-full">
               <thead>
                 <tr>
                   <th>Kode</th>
                   <th>Obat</th>
-                  <th />
+                  <th align="center">Aksi</th>
                 </tr>
               </thead>
               <tbody>
@@ -103,16 +131,16 @@ const TransaksiObat = () => {
                         <tr>
                           <td>{tes.Kode}</td>
                           <td>{tes.Nama}</td>
-                          <th>
+                          <td align="center">
                             <label>
                               <button
                                 className="btn btn-secondary btn-xs"
-                                onClick={() => addTransaksi(tes)}
+                                onClick={() => addList(tes)}
                               >
                                 tambah
                               </button>
                             </label>
-                          </th>
+                          </td>
                         </tr>
                       )
                     })
@@ -137,15 +165,15 @@ const TransaksiObat = () => {
               })}
             </div>
           </div>
-          <div className="w-full rounded-md lg:w-2/3">
+          <div className="col-span-2 w-full overflow-x-auto rounded-md">
             <table className="table-compact table w-full">
               <thead>
                 <tr>
                   <th />
                   <th>Nama Obat</th>
-                  <th>Rincian Obat</th>
                   <th>Jumlah Obat</th>
                   <th>Harga</th>
+                  <th>Total</th>
                   <th align="center">Aksi</th>
                 </tr>
               </thead>
@@ -155,7 +183,6 @@ const TransaksiObat = () => {
                     <tr>
                       <th />
                       <td>{data.RincianObat}</td>
-                      <td>{data.Harga}</td>
                       <td>
                         <div className="form-control">
                           <div className="input-group">
@@ -183,7 +210,8 @@ const TransaksiObat = () => {
                           </div>
                         </div>
                       </td>
-                      <td>{data.Harga}</td>
+                      <td>{rupiah(data.Harga)}</td>
+                      <td>{rupiah(data.Harga * data.Jumlah)}</td>
                       <td align="center">
                         <button
                           className="btn btn-accent btn-xs"
@@ -202,7 +230,7 @@ const TransaksiObat = () => {
             <button
               className="btn btn-primary btn-sm float-right mt-3"
               onClick={() => {
-                console.log(obatValue)
+                addTransaksi()
               }}
             >
               Submit
