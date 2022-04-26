@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import { HiOutlineMinusSm, HiPlusSm } from 'react-icons/hi'
 import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
@@ -18,8 +18,9 @@ import { Data, Obat, Transaksi } from '../../types/pasien'
 import { rupiah } from '../../utils/formatRupiah'
 
 const DetailTransaksi = () => {
-  const [dataObat, setDataObat] = useState<[]>()
+  const [dataObat, setDataObat] = useState<Data[]>()
   const [currentPage, setCurrentPage] = useState<number>(0)
+  const [inputSearch, setInputSearch] = useState<string>('')
   const router = useRouter()
   const { id } = router.query
   const dispatch = useDispatch()
@@ -51,6 +52,7 @@ const DetailTransaksi = () => {
       RincianObat: data.Nama,
       Jumlah: 1,
       Harga: data.HargaJual,
+      Stok: data.Sisa,
       IdObat: data.Id,
       IdPemeriksaan: parseInt(id as string),
     }
@@ -72,8 +74,7 @@ const DetailTransaksi = () => {
         `${process.env.NEXT_PUBLIC_URL_HOST}/api/transaksi/${id}`,
         obatValue
       )
-      .then((res) => {
-        console.log(res)
+      .then(() => {
         toast.success('Data berhasil ditambahkan!')
       })
       .catch((err) => {
@@ -90,6 +91,21 @@ const DetailTransaksi = () => {
     setCurrentPage(tes - 1)
   }
 
+  const inputHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    let lowerCase = e.target.value.toLowerCase()
+    setInputSearch(lowerCase)
+  }
+
+  const dataX = dataObat?.[currentPage].Data || []
+
+  const filteredData = dataX.filter((tes) => {
+    if (inputSearch == '') {
+      return tes
+    } else {
+      return tes.Nama.toLowerCase().includes(inputSearch)
+    }
+  })
+
   useEffect(() => {
     getAllData()
   }, [])
@@ -104,6 +120,7 @@ const DetailTransaksi = () => {
             type="text"
             className="input input-bordered input-sm"
             placeholder="search"
+            onChange={inputHandler}
           />
         </div>
         <div className="mt-4 grid grid-cols-1 gap-y-12 md:grid-cols-3 md:gap-x-6">
@@ -113,34 +130,34 @@ const DetailTransaksi = () => {
                 <tr>
                   <th>Kode</th>
                   <th>Obat</th>
+                  <th>Stok</th>
                   <th align="center">Aksi</th>
                 </tr>
               </thead>
               <tbody>
-                {dataObat
-                  ?.filter((page: Data) => {
-                    return page.Pages == currentPage + 1
-                  })
-                  .map((page: Data) => {
-                    return page.Data.map((tes: Obat) => {
-                      return (
-                        <tr>
-                          <td>{tes.Kode}</td>
-                          <td>{tes.Nama}</td>
-                          <td align="center">
-                            <label>
-                              <button
-                                className="btn btn-secondary btn-xs"
-                                onClick={() => addList(tes)}
-                              >
-                                tambah
-                              </button>
-                            </label>
-                          </td>
-                        </tr>
-                      )
-                    })
-                  })}
+                {filteredData.map((data: Obat) => {
+                  return (
+                    <tr>
+                      <td>{data.Kode}</td>
+                      <td>{data.Nama}</td>
+                      <td>{data.Sisa}</td>
+                      <td align="center">
+                        {data.Sisa <= 0 ? (
+                          <button className={`btn btn-disabled btn-xs`}>
+                            kosong
+                          </button>
+                        ) : (
+                          <button
+                            className={`btn btn-secondary btn-xs`}
+                            onClick={() => addList(data)}
+                          >
+                            tambah
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
             <div className="btn-group mt-4">
@@ -167,38 +184,41 @@ const DetailTransaksi = () => {
                 <tr>
                   <th />
                   <th>Nama Obat</th>
+                  <th>Rincian Obat</th>
                   <th>Jumlah Obat</th>
-                  <th>Harga</th>
-                  <th>Total</th>
+                  <th>Harga Obat</th>
+                  <th>Total Harga</th>
                   <th align="center">Aksi</th>
                 </tr>
               </thead>
               <tbody>
-                {obatValue.map((data: Transaksi) => {
+                {obatValue.map((data: Transaksi, i: number) => {
                   return (
                     <tr>
                       <th />
-                      <td>{data.RincianObat}</td>
+                      <td>{}</td>
+                      <td>{'asd'}</td>
                       <td>
                         <div className="form-control">
                           <div className="input-group">
                             <button
                               className="btn btn-square btn-sm"
                               onClick={() => {
-                                dispatch(minusObat(data.IdObat - 1))
+                                dispatch(minusObat(i))
                               }}
                             >
                               <HiOutlineMinusSm />
                             </button>
                             <input
                               min={1}
+                              max={data.Stok}
                               className="input input-bordered input-sm w-10"
                               value={data.Jumlah}
                             />
                             <button
                               className="btn btn-square btn-sm"
                               onClick={() => {
-                                dispatch(plusObat(data.IdObat - 1))
+                                dispatch(plusObat(i))
                               }}
                             >
                               <HiPlusSm />

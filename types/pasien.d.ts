@@ -37,6 +37,7 @@ export type Transaksi = {
   RincianObat: String
   Jumlah: number
   Harga: number
+  Stok: number
   IdObat: number
   IdPemeriksaan: number
 }

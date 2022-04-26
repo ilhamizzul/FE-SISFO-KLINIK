@@ -2,10 +2,10 @@ import { createSlice } from '@reduxjs/toolkit'
 import { Transaksi } from '../types/pasien'
 import { RootState } from './globalStore'
 
-interface transaksi_state {
+interface TransaksiState {
   value: Transaksi[]
 }
-const initialState: transaksi_state = {
+const initialState: TransaksiState = {
   value: [],
 }
 
