@@ -15,7 +15,14 @@ import Modal from '../../../components/Modal'
 import ModalAction from '../../../components/ModalAction'
 import PageTitle from '../../../components/PageTitle'
 import SectionTitle from '../../../components/SectionTitle'
-import { Data, Pasien, DetailPasien } from '../../../types/pasien'
+import {
+  Data,
+  Pasien,
+  DetailPasien,
+  DataNota,
+  NotaObat,
+} from '../../../types/pasien'
+import { rupiah } from '../../../utils/formatRupiah'
 
 const DetailPemeriksaan = () => {
   const router = useRouter()
@@ -28,6 +35,9 @@ const DetailPemeriksaan = () => {
   const [diagnosis, setDiagnosis] = useState<string>()
   const [terapi, setTerapi] = useState<string>()
   const [idDetail, setIdDetail] = useState<number>()
+  const [dataNota, setDataNota] = useState<DataNota>()
+  const [dataObat, setDataObat] = useState<Data[]>()
+  const dataX = dataObat?.[currentPage].Data || []
 
   const getDetailPasien = async () => {
     try {
@@ -49,6 +59,15 @@ const DetailPemeriksaan = () => {
       .catch((err) => {
         console.log(err)
       })
+  }
+
+  const getObat = async () => {
+    try {
+      const res = await axios(`${process.env.NEXT_PUBLIC_URL_HOST}/api/obat`)
+      setDataObat(res.data.value)
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   const addDetail = () => {
@@ -112,6 +131,17 @@ const DetailPemeriksaan = () => {
     setTerapi(data.Terapi)
   }
 
+  const handleNota = (data: DetailPasien) => {
+    axios(
+      `https://apis-klinik.fanzru.dev/api/transaksi/${data.Id}/${data.IdPasien}`
+    )
+      .then((res) => {
+        console.log(res)
+        setDataNota(res.data.value)
+      })
+      .catch((err) => console.log(err))
+  }
+
   const deleteDetail = (idPemeriksaan: number) => {
     axios
       .delete(
@@ -155,9 +185,12 @@ const DetailPemeriksaan = () => {
     exportFromJSON({ data, fileName, exportType, fields })
   }
 
+  let sum: number = 0
+
   useEffect(() => {
     getDetailPasien()
     getPasien()
+    getObat()
   }, [])
 
   return (
@@ -221,12 +254,16 @@ const DetailPemeriksaan = () => {
                                     <label
                                       className="btn btn-primary btn-xs rounded-r-none"
                                       htmlFor={'modal-transaksi'}
+                                      onClick={() => handleNota(tes)}
                                     >
                                       <FaClipboardCheck />
                                     </label>
                                   ) : (
                                     <Link
-                                      href={`/transaksi/${tes.Id}`}
+                                      href={{
+                                        pathname: `/transaksi/${tes.Id}`,
+                                        query: { idPasien: tes.IdPasien },
+                                      }}
                                       passHref
                                     >
                                       <label className="btn btn-warning btn-xs rounded-r-none">
@@ -264,7 +301,7 @@ const DetailPemeriksaan = () => {
           <div className="btn-group mt-4">
             {detailPasien?.map((page: Data, i: number) => {
               return (
-                <>
+                <div key={i}>
                   <button
                     className={`btn btn-sm ${
                       currentPage + 1 == page.Pages ? 'btn-active' : ''
@@ -274,7 +311,7 @@ const DetailPemeriksaan = () => {
                   >
                     {page.Pages}
                   </button>
-                </>
+                </div>
               )
             })}
           </div>
@@ -383,20 +420,41 @@ const DetailPemeriksaan = () => {
           </label>
         </ModalAction>
       </Modal>
-      <Modal title={'Data Transaksi'} id={'modal-transaksi'}>
-        <span>Yakin ingin menghapus data pasien?</span>
+      <Modal title={'Nota Transaksi Pasien'} id={'modal-transaksi'}>
+        <div className="overflow-x-auto">
+          <table className="table-compact table w-full">
+            <thead>
+              <tr>
+                <th>Nama Obat</th>
+                <th>Rincian Obat</th>
+                <th align="center">Jumlah Obat</th>
+                <th>Harga</th>
+              </tr>
+            </thead>
+            <tbody>
+              {dataNota?.obat.map((data: NotaObat, i: number) => {
+                let obat = dataX.find((elemen) => elemen.Id == data.IdObat)
+                sum += data.Harga
+                return (
+                  <tr key={i}>
+                    <td>{obat.Nama}</td>
+                    <td>{data.RincianObat}</td>
+                    <td align="center">{data.Jumlah}</td>
+                    <td>{rupiah(data.Harga)}</td>
+                  </tr>
+                )
+              })}
+              <tr>
+                <td className="font-bold">Total Harga : </td>
+                <td colSpan={2}></td>
+                <td className="font-bold">{rupiah(sum)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <ModalAction>
-          <label htmlFor="modal-transaksi" className="btn btn-accent btn-sm">
+          <label htmlFor="modal-transaksi" className="btn btn-sm">
             Kembali
-          </label>
-          <label
-            htmlFor="modal-hapus"
-            className="btn btn-primary btn-sm"
-            onClick={() => {
-              deleteDetail(idDetail!)
-            }}
-          >
-            Hapus Data
           </label>
         </ModalAction>
       </Modal>

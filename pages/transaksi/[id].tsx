@@ -13,6 +13,7 @@ import {
   deleteObat,
   plusObat,
   minusObat,
+  tambahRincian,
 } from '../../redux/obatSlice'
 import { Data, Obat, Transaksi } from '../../types/pasien'
 import { rupiah } from '../../utils/formatRupiah'
@@ -22,7 +23,7 @@ const DetailTransaksi = () => {
   const [currentPage, setCurrentPage] = useState<number>(0)
   const [inputSearch, setInputSearch] = useState<string>('')
   const router = useRouter()
-  const { id } = router.query
+  const { id, slug } = router.query
   const dispatch = useDispatch()
   const obatValue = useSelector(selectObatValue)
 
@@ -75,6 +76,7 @@ const DetailTransaksi = () => {
         obatValue
       )
       .then(() => {
+        router.push(`/pasien/${slug}`)
         toast.success('Data berhasil ditambahkan!')
       })
       .catch((err) => {
@@ -193,11 +195,24 @@ const DetailTransaksi = () => {
               </thead>
               <tbody>
                 {obatValue.map((data: Transaksi, i: number) => {
+                  let namaObat = dataX.find(
+                    (elemen) => elemen.Id == data.IdObat
+                  )
                   return (
                     <tr>
                       <th />
-                      <td>{}</td>
-                      <td>{'asd'}</td>
+                      <td>{namaObat.Nama}</td>
+                      <td>
+                        <input
+                          type="text"
+                          className="input input-bordered input-sm"
+                          onChange={(e) => {
+                            dispatch(
+                              tambahRincian({ id: i, data: e.target.value })
+                            )
+                          }}
+                        />
+                      </td>
                       <td>
                         <div className="form-control">
                           <div className="input-group">

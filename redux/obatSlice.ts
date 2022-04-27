@@ -32,10 +32,16 @@ const obatSlice = createSlice({
       if (newArr[action.payload].Jumlah > 1) newArr[action.payload].Jumlah--
       state.value = newArr
     },
+    tambahRincian: (state, action) => {
+      const newArr = [...state.value]
+      newArr[action.payload.id].RincianObat = action.payload.data
+      state.value = newArr
+    },
   },
 })
 
-export const { addObat, deleteObat, plusObat, minusObat } = obatSlice.actions
+export const { addObat, deleteObat, plusObat, minusObat, tambahRincian } =
+  obatSlice.actions
 
 export const selectObatValue = (state: RootState) => state.obat.value
 
