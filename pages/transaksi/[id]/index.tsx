@@ -4,9 +4,9 @@ import { ChangeEvent, useEffect, useState } from 'react'
 import { HiOutlineMinusSm, HiPlusSm } from 'react-icons/hi'
 import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
-import Layout from '../../components/Layout'
-import PageTitle from '../../components/PageTitle'
-import SectionTitle from '../../components/SectionTitle'
+import Layout from '../../../components/Layout'
+import PageTitle from '../../../components/PageTitle'
+import SectionTitle from '../../../components/SectionTitle'
 import {
   selectObatValue,
   addObat,
@@ -14,9 +14,9 @@ import {
   plusObat,
   minusObat,
   tambahRincian,
-} from '../../redux/obatSlice'
-import { Data, Obat, Transaksi } from '../../types/pasien'
-import { rupiah } from '../../utils/formatRupiah'
+} from '../../../redux/obatSlice'
+import { Data, Obat, Transaksi } from '../../../types/pasien'
+import { rupiah } from '../../../utils/formatRupiah'
 
 const DetailTransaksi = () => {
   const [dataObat, setDataObat] = useState<Data[]>()

@@ -53,7 +53,7 @@ const Sidebar = () => {
           className={
             sidebarValue.pasien ||
             urlString == '/pasien' ||
-            urlString == '/recycle'
+            urlString == '/pasien/recycle'
               ? 'block'
               : 'hidden'
           }
@@ -67,8 +67,8 @@ const Sidebar = () => {
             </Link>
           </li>
           <li className={'ml-3'}>
-            <Link href={'/recycle'} passHref>
-              <a className={urlString == '/recycle' ? 'active' : ''}>
+            <Link href={'/pasien/recycle'} passHref>
+              <a className={urlString == '/pasien/recycle' ? 'active' : ''}>
                 <HiTrash />
                 Recycle
               </a>
@@ -92,7 +92,11 @@ const Sidebar = () => {
         </li>
         <div
           className={
-            sidebarValue.obat || urlString == '/obat' ? 'block' : 'hidden'
+            sidebarValue.obat ||
+            urlString == '/obat' ||
+            urlString == '/obat/recycle'
+              ? 'block'
+              : 'hidden'
           }
         >
           <li className={'ml-3'}>
@@ -100,6 +104,14 @@ const Sidebar = () => {
               <a className={urlString == '/obat' ? 'active' : ''}>
                 <HiOutlineClipboardList />
                 Data Obat
+              </a>
+            </Link>
+          </li>
+          <li className={'ml-3'}>
+            <Link href={'/obat/recycle'} passHref>
+              <a className={urlString == '/obat/recycle' ? 'active' : ''}>
+                <HiTrash />
+                Recycle
               </a>
             </Link>
           </li>

@@ -1,12 +1,12 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
-import Layout from '../components/Layout'
-import Modal from '../components/Modal'
-import ModalAction from '../components/ModalAction'
-import PageTitle from '../components/PageTitle'
-import SectionTitle from '../components/SectionTitle'
-import { Data } from '../types/pasien'
+import Layout from '../../components/Layout'
+import Modal from '../../components/Modal'
+import ModalAction from '../../components/ModalAction'
+import PageTitle from '../../components/PageTitle'
+import SectionTitle from '../../components/SectionTitle'
+import { Data } from '../../types/pasien'
 
 const Recycle = () => {
   const [data, setData] = useState<[]>()
