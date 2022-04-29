@@ -13,12 +13,12 @@ const RecycleObat = () => {
   const [data, setData] = useState<[]>()
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [currentPage, setCurrentPage] = useState<number>(0)
-  const [idPemeriksaan, setIdPemeriksaan] = useState<number>()
+  const [idObat, setIdObat] = useState<number>()
 
   const getObatRecycle = async () => {
     try {
       const res = await axios(
-        `${process.env.NEXT_PUBLIC_URL_HOST}/api/pasien/sampah`
+        `${process.env.NEXT_PUBLIC_URL_HOST}/api/obat/sampah`
       )
       setData(res.data.value)
       setIsLoading(false)
@@ -34,9 +34,7 @@ const RecycleObat = () => {
 
   const activateObat = (id: number) => {
     axios
-      .post(`${process.env.NEXT_PUBLIC_URL_HOST}/api/pasien/aktivasi`, {
-        Id: id,
-      })
+      .patch(`${process.env.NEXT_PUBLIC_URL_HOST}/api/obat/activated/${id}`)
       .then(() => {
         getObatRecycle()
         toast.success('Data Obat berhasil diaktifkan kembali!')
@@ -87,16 +85,16 @@ const RecycleObat = () => {
                           return (
                             <tr key={i}>
                               <th>{i + 1}</th>
-                              <td>Kode Obat</td>
-                              <td>Nama Obat</td>
-                              <td>{rupiah(10000)}</td>
-                              <td>5</td>
+                              <td>{tes.Kode}</td>
+                              <td>{tes.Nama}</td>
+                              <td>{rupiah(tes.HargaJual)}</td>
+                              <td>{tes.Sisa}</td>
                               <td>
                                 <div className="flex items-center justify-center space-x-2">
                                   <label
                                     className="btn btn-secondary btn-xs"
                                     htmlFor={'modal-activate'}
-                                    // onClick={() => setIdPemeriksaan(tes.Id)}
+                                    onClick={() => setIdObat(tes.Id)}
                                   >
                                     Aktivasi
                                   </label>
@@ -139,7 +137,7 @@ const RecycleObat = () => {
           <label
             htmlFor="modal-activate"
             onClick={() => {
-              activateObat(idPemeriksaan!)
+              activateObat(idObat!)
             }}
             className="btn btn-primary btn-sm"
           >

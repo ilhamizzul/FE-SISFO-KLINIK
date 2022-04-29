@@ -2,7 +2,7 @@ import axios from 'axios'
 import exportFromJSON from 'export-from-json'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { ChangeEvent, useEffect, useState } from 'react'
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { FaClipboardCheck, FaDollarSign } from 'react-icons/fa'
 import { HiPencilAlt, HiTrash } from 'react-icons/hi'
 import { toast } from 'react-toastify'
@@ -453,9 +453,10 @@ const DetailPemeriksaan = () => {
           </table>
         </div>
         <ModalAction>
-          <label htmlFor="modal-transaksi" className="btn btn-sm">
-            Kembali
+          <label htmlFor="modal-transaksi" className="btn btn-accent btn-sm">
+            Close
           </label>
+          <label className="btn btn-secondary btn-sm">Print</label>
         </ModalAction>
       </Modal>
     </>

@@ -56,11 +56,7 @@ const ObatPage = () => {
 
   const deleteObat = async (id: number) => {
     axios
-      .delete(`${process.env.NEXT_PUBLIC_URL_HOST}/api/obat/`, {
-        data: {
-          Id: id,
-        },
-      })
+      .delete(`${process.env.NEXT_PUBLIC_URL_HOST}/api/obat/deactive/${id}`)
       .then((res) => {
         getAllData()
         toast.success('Data obat berhasil dihapus!')
@@ -74,27 +70,27 @@ const ObatPage = () => {
 
   const editObat = () => {
     axios
-      .post(`${process.env.NEXT_PUBLIC_URL_HOST}/api/pasien/edit`, {
-        Kode: kodeObat,
+      .patch(`${process.env.NEXT_PUBLIC_URL_HOST}/api/obat`, {
+        Id: idObat,
         Nama: namaObat,
         HargaJual: hargaJual,
       })
       .then(() => {
         getAllData()
-        toast.success('Data berhasil ditambahkan!')
+        toast.success('Data obat berhasil diubah!')
         resetState()
       })
       .catch((err) => {
         getAllData()
-        toast.error('Data gagal ditambahkan!')
+        toast.error('Data obat gagal diubah!')
         console.log(err)
         resetState()
       })
   }
 
   const handleEdit = (data: Obat) => {
-    setKodeObat(data.Kode)
     setNamaObat(data.Nama)
+    setIdObat(data.Id)
     setHargaJual(data.HargaJual)
   }
 
@@ -121,7 +117,7 @@ const ObatPage = () => {
   }
 
   const resetState = (): void => {
-    setKodeObat('')
+    setIdObat(0)
     setNamaObat('')
     setHargaJual(0)
   }
@@ -273,15 +269,6 @@ const ObatPage = () => {
         </ModalAction>
       </Modal>
       <Modal title={'Ubah Data Obat'} id={'modal-edit'}>
-        <Form>
-          <LabelForm>Kode Obat</LabelForm>
-          <Input
-            value={kodeObat}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              setKodeObat(e.target.value)
-            }}
-          />
-        </Form>
         <Form>
           <LabelForm>Nama Obat</LabelForm>
           <Input
