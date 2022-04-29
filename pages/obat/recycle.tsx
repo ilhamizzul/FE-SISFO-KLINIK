@@ -9,13 +9,13 @@ import SectionTitle from '../../components/SectionTitle'
 import { Data } from '../../types/pasien'
 import { rupiah } from '../../utils/formatRupiah'
 
-const Recycle = () => {
+const RecycleObat = () => {
   const [data, setData] = useState<[]>()
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [currentPage, setCurrentPage] = useState<number>(0)
   const [idPemeriksaan, setIdPemeriksaan] = useState<number>()
 
-  const getDataRecycle = async () => {
+  const getObatRecycle = async () => {
     try {
       const res = await axios(
         `${process.env.NEXT_PUBLIC_URL_HOST}/api/pasien/sampah`
@@ -29,26 +29,26 @@ const Recycle = () => {
 
   const pagination = (tes: number) => {
     setCurrentPage(tes - 1)
-    getDataRecycle()
+    getObatRecycle()
   }
 
-  const activatePasien = (id: number) => {
+  const activateObat = (id: number) => {
     axios
       .post(`${process.env.NEXT_PUBLIC_URL_HOST}/api/pasien/aktivasi`, {
         Id: id,
       })
       .then(() => {
-        getDataRecycle()
-        toast.success('Data pasien berhasil diaktifkan kembali!')
+        getObatRecycle()
+        toast.success('Data Obat berhasil diaktifkan kembali!')
       })
       .catch(() => {
-        getDataRecycle()
-        toast.error('Data pasien gagal diaktifkan!')
+        getObatRecycle()
+        toast.error('Data Obat gagal diaktifkan!')
       })
   }
 
   useEffect(() => {
-    getDataRecycle()
+    getObatRecycle()
   }, [])
 
   return (
@@ -130,7 +130,7 @@ const Recycle = () => {
           </div>
         </div>
       </Layout>
-      <Modal title={'Aktifkan Data Pasien'} id={'modal-activate'}>
+      <Modal title={'Aktifkan Data Obat'} id={'modal-activate'}>
         <span>Yakin ingin mengaktifkan data pasien?</span>
         <ModalAction>
           <label htmlFor="modal-activate" className="btn btn-accent btn-sm">
@@ -139,7 +139,7 @@ const Recycle = () => {
           <label
             htmlFor="modal-activate"
             onClick={() => {
-              activatePasien(idPemeriksaan!)
+              activateObat(idPemeriksaan!)
             }}
             className="btn btn-primary btn-sm"
           >
@@ -151,4 +151,4 @@ const Recycle = () => {
   )
 }
 
-export default Recycle
+export default RecycleObat

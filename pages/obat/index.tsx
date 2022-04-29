@@ -93,7 +93,7 @@ const ObatPage = () => {
         <SectionTitle>Data Obat</SectionTitle>
         <div className="mt-4">
           <div className="mb-4 space-x-2">
-            <label className="btn btn-primary btn-sm" htmlFor={'my-modal'}>
+            <label className="btn btn-primary btn-sm" htmlFor={'modal-tambah'}>
               Tambah Data
             </label>
             <button className="btn btn-secondary btn-sm" onClick={handleExport}>
@@ -140,13 +140,13 @@ const ObatPage = () => {
                               <td>{tes.Sisa}</td>
                               <td className="items-center justify-center">
                                 <div className="flex items-center justify-center">
-                                  <Link href={`/pasien/${tes.Id}`} passHref>
+                                  {/* <Link href={`/pasien/${tes.Id}`} passHref>
                                     <label className="btn btn-warning btn-xs rounded-r-none">
                                       <HiEye />
                                     </label>
-                                  </Link>
+                                  </Link> */}
                                   <label
-                                    className="btn btn-secondary btn-xs rounded-none"
+                                    className="btn btn-secondary btn-xs rounded-r-none"
                                     htmlFor={'modal-edit'}
                                     // onClick={() => handleEdit(tes)}
                                   >
@@ -189,7 +189,7 @@ const ObatPage = () => {
           </div>
         </div>
       </Layout>
-      <Modal title={'Tambah Data Pasien'} id={'my-modal'}>
+      <Modal title={'Tambah Data Obat'} id={'modal-tambah'}>
         <Form>
           <LabelForm>Kode Obat</LabelForm>
           <Input
@@ -220,15 +220,75 @@ const ObatPage = () => {
           />
         </Form>
         <ModalAction>
-          <label htmlFor="my-modal" className="btn btn-accent btn-sm">
+          <label htmlFor="modal-tambah" className="btn btn-accent btn-sm">
             Kembali
           </label>
           <label
-            htmlFor="my-modal"
+            htmlFor="modal-tambah"
             className="btn btn-primary btn-sm"
             onClick={addObat}
           >
             Tambah Data
+          </label>
+        </ModalAction>
+      </Modal>
+      <Modal title={'Ubah Data Obat'} id={'modal-edit'}>
+        <Form>
+          <LabelForm>Kode Obat</LabelForm>
+          <Input
+            value={kodeObat}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              setKodeObat(e.target.value)
+            }}
+          />
+        </Form>
+        <Form>
+          <LabelForm>Nama Obat</LabelForm>
+          <Input
+            value={namaObat}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              setNamaObat(e.target.value)
+            }}
+          />
+        </Form>
+        <Form>
+          <LabelForm>Harga Jual Obat</LabelForm>
+          <Input
+            type="number"
+            min={0}
+            value={hargaJual}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              setHargaJual(parseInt(e.target.value))
+            }}
+          />
+        </Form>
+        <ModalAction>
+          <label htmlFor="modal-edit" className="btn btn-accent btn-sm">
+            Kembali
+          </label>
+          <label
+            htmlFor="modal-edit"
+            className="btn btn-primary btn-sm"
+            onClick={addObat}
+          >
+            Tambah Data
+          </label>
+        </ModalAction>
+      </Modal>
+      <Modal title={'Hapus Data Obat'} id={'modal-hapus'}>
+        <span>Yakin ingin menghapus data obat?</span>
+        <ModalAction>
+          <label htmlFor="modal-hapus" className="btn btn-accent btn-sm">
+            Kembali
+          </label>
+          <label
+            htmlFor="modal-hapus"
+            // onClick={() => {
+            //   deletePasien(idPemeriksaan!)
+            // }}
+            className="btn btn-primary btn-sm"
+          >
+            Hapus Data
           </label>
         </ModalAction>
       </Modal>
