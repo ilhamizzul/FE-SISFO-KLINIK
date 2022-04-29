@@ -12,7 +12,7 @@ import Modal from '../../components/Modal'
 import ModalAction from '../../components/ModalAction'
 import PageTitle from '../../components/PageTitle'
 import SectionTitle from '../../components/SectionTitle'
-import { Data } from '../../types/pasien'
+import { Data, Obat } from '../../types/pasien'
 import { exportData } from '../../utils/exportData'
 import { rupiah } from '../../utils/formatRupiah'
 
@@ -23,6 +23,7 @@ const ObatPage = () => {
   const [namaObat, setNamaObat] = useState<string>()
   const [hargaJual, setHargaJual] = useState<number>(0)
   const [currentPage, setCurrentPage] = useState<number>(0)
+  const [idObat, setIdObat] = useState<number>(0)
 
   const getAllData = async () => {
     try {
@@ -51,6 +52,50 @@ const ObatPage = () => {
         toast.error('Data gagal ditambahkan!')
         resetState()
       })
+  }
+
+  const deleteObat = async (id: number) => {
+    axios
+      .delete(`${process.env.NEXT_PUBLIC_URL_HOST}/api/obat/`, {
+        data: {
+          Id: id,
+        },
+      })
+      .then((res) => {
+        getAllData()
+        toast.success('Data obat berhasil dihapus!')
+        console.log(res)
+      })
+      .catch((err) => {
+        console.log(err)
+        toast.error('Data obat gagal dihapus!')
+      })
+  }
+
+  const editObat = () => {
+    axios
+      .post(`${process.env.NEXT_PUBLIC_URL_HOST}/api/pasien/edit`, {
+        Kode: kodeObat,
+        Nama: namaObat,
+        HargaJual: hargaJual,
+      })
+      .then(() => {
+        getAllData()
+        toast.success('Data berhasil ditambahkan!')
+        resetState()
+      })
+      .catch((err) => {
+        getAllData()
+        toast.error('Data gagal ditambahkan!')
+        console.log(err)
+        resetState()
+      })
+  }
+
+  const handleEdit = (data: Obat) => {
+    setKodeObat(data.Kode)
+    setNamaObat(data.Nama)
+    setHargaJual(data.HargaJual)
   }
 
   let allData: Array<object> = []
@@ -140,22 +185,17 @@ const ObatPage = () => {
                               <td>{tes.Sisa}</td>
                               <td className="items-center justify-center">
                                 <div className="flex items-center justify-center">
-                                  {/* <Link href={`/pasien/${tes.Id}`} passHref>
-                                    <label className="btn btn-warning btn-xs rounded-r-none">
-                                      <HiEye />
-                                    </label>
-                                  </Link> */}
                                   <label
                                     className="btn btn-secondary btn-xs rounded-r-none"
                                     htmlFor={'modal-edit'}
-                                    // onClick={() => handleEdit(tes)}
+                                    onClick={() => handleEdit(tes)}
                                   >
                                     <HiPencilAlt />
                                   </label>
                                   <label
                                     className="btn btn-accent btn-xs rounded-l-none"
                                     htmlFor={'modal-hapus'}
-                                    // onClick={() => setIdPemeriksaan(tes.Id)}
+                                    onClick={() => setIdObat(tes.Id)}
                                   >
                                     <HiTrash />
                                   </label>
@@ -269,7 +309,7 @@ const ObatPage = () => {
           <label
             htmlFor="modal-edit"
             className="btn btn-primary btn-sm"
-            onClick={addObat}
+            onClick={editObat}
           >
             Tambah Data
           </label>
@@ -283,9 +323,9 @@ const ObatPage = () => {
           </label>
           <label
             htmlFor="modal-hapus"
-            // onClick={() => {
-            //   deletePasien(idPemeriksaan!)
-            // }}
+            onClick={() => {
+              deleteObat(idObat!)
+            }}
             className="btn btn-primary btn-sm"
           >
             Hapus Data

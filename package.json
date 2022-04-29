@@ -8,7 +8,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "^1.8.0",
     "axios": "^0.26.0",
-    "daisyui": "^2.9.0",
+    "daisyui": "^2.14.2",
     "export-from-json": "^1.5.2",
     "next": "latest",
     "react": "^17.0.2",
