@@ -147,7 +147,6 @@ const ObatPage = () => {
                   <tr>
                     <th />
                     <th>Kode</th>
-                    <th>Id Obat</th>
                     <th>Nama</th>
                     <th>Harga Jual</th>
                     <th>Stok</th>
@@ -176,7 +175,6 @@ const ObatPage = () => {
                                   : i + 1 + 10 * currentPage}
                               </th>
                               <td>{tes.Kode}</td>
-                              <td>{tes.Id}</td>
                               <td>{tes.Nama}</td>
                               <td>{rupiah(tes.HargaJual)}</td>
                               <td>{tes.Sisa}</td>
@@ -230,7 +228,6 @@ const ObatPage = () => {
         <Form>
           <LabelForm>Kode Obat</LabelForm>
           <Input
-            value={kodeObat}
             onChange={(e: ChangeEvent<HTMLInputElement>) => {
               setKodeObat(e.target.value)
             }}
@@ -239,7 +236,6 @@ const ObatPage = () => {
         <Form>
           <LabelForm>Nama Obat</LabelForm>
           <Input
-            value={namaObat}
             onChange={(e: ChangeEvent<HTMLInputElement>) => {
               setNamaObat(e.target.value)
             }}
@@ -250,7 +246,6 @@ const ObatPage = () => {
           <Input
             type="number"
             min={0}
-            value={hargaJual}
             onChange={(e: ChangeEvent<HTMLInputElement>) => {
               setHargaJual(parseInt(e.target.value))
             }}

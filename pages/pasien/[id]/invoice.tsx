@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { is } from 'immer/dist/internal'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { DataNota, Obat } from '../../../types/pasien'
