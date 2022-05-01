@@ -2,16 +2,20 @@ import axios from 'axios'
 import exportFromJSON from 'export-from-json'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
+import React, { ChangeEvent, useEffect, useState } from 'react'
 import { FaClipboardCheck, FaDollarSign } from 'react-icons/fa'
 import { HiPencilAlt, HiTrash } from 'react-icons/hi'
+import { toast } from 'react-toastify'
+import Form from '../../../components/Form'
+import Input from '../../../components/Input'
+import LabelForm from '../../../components/LabelForm'
 
 import Layout from '../../../components/Layout'
 import Modal from '../../../components/Modal'
 import ModalAction from '../../../components/ModalAction'
-import ModalHapusPasien from '../../../components/ModalHapusPasien'
-import ModalTambahPasien from '../../../components/ModalTambahPasien'
-import ModalUbahPasien from '../../../components/ModalUbahPasien'
+import ModalHapusPemeriksaan from '../../../components/ModalHapusPemeriksaan'
+import ModalTambahPemeriksaan from '../../../components/ModalTambahPemeriksaan'
+import ModalUbahPemeriksaan from '../../../components/ModalUbahPemeriksaan'
 import PageTitle from '../../../components/PageTitle'
 import SectionTitle from '../../../components/SectionTitle'
 import {
@@ -30,9 +34,9 @@ const DetailPemeriksaan = () => {
   const [detailPasien, setDetailPasien] = useState<[]>()
   const [pasien, setPasien] = useState<Pasien>()
   const [currentPage, setCurrentPage] = useState<number>(0)
-  const [_hasilPemeriksaan, setHasilPemeriksaan] = useState<string>()
-  const [_diagnosis, setDiagnosis] = useState<string>()
-  const [_terapi, setTerapi] = useState<string>()
+  const [hasilPemeriksaan, setHasilPemeriksaan] = useState<string>()
+  const [diagnosis, setDiagnosis] = useState<string>()
+  const [terapi, setTerapi] = useState<string>()
   const [idDetail, setIdDetail] = useState<number>()
   const [dataNota, setDataNota] = useState<DataNota>()
   const [_dataObat, setDataObat] = useState<Data[]>()
@@ -67,6 +71,34 @@ const DetailPemeriksaan = () => {
     } catch (err) {
       console.log(err)
     }
+  }
+
+  const editDetail = () => {
+    const date = new Date().toISOString()
+
+    axios
+      .post(`${process.env.NEXT_PUBLIC_URL_HOST}/api/pemeriksaan/edit`, {
+        TanggalPemeriksaan: date,
+        HasilPemeriksaan: hasilPemeriksaan,
+        Diagnosis: diagnosis,
+        Terapi: terapi,
+        Id: idDetail,
+      })
+      .then(() => {
+        getDetailPasien()
+        toast.success('Data berhasil diubah!')
+        setHasilPemeriksaan('')
+        setDiagnosis('')
+        setTerapi('')
+      })
+      .catch((err) => {
+        getDetailPasien()
+        toast.error('Data gagal diubah!')
+        console.log(err)
+        setHasilPemeriksaan('')
+        setDiagnosis('')
+        setTerapi('')
+      })
   }
 
   const handleEdit = (data: DetailPasien) => {
@@ -246,9 +278,51 @@ const DetailPemeriksaan = () => {
           </div>
         </div>
       </Layout>
-      <ModalTambahPasien getDetailPasien={getDetailPasien} id={idPasien} />
-      <ModalUbahPasien getDetailPasien={getDetailPasien} id={idPasien} />
-      <ModalHapusPasien getDetailPasien={getDetailPasien} id={idDetail} />
+      <ModalTambahPemeriksaan getDetailPasien={getDetailPasien} id={idPasien} />
+      <Modal title={'Ubah Data Pasien'} id={'modal-edit'}>
+        <Form>
+          <LabelForm>Hasil Pemeriksaan</LabelForm>
+          <Input
+            value={hasilPemeriksaan}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              setHasilPemeriksaan(e.target.value)
+            }}
+          />
+        </Form>
+        <Form>
+          <LabelForm>Diagnosis</LabelForm>
+          <Input
+            value={diagnosis}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              setDiagnosis(e.target.value)
+            }}
+          />
+        </Form>
+        <Form>
+          <LabelForm>Terapi</LabelForm>
+          <Input
+            value={terapi}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              setTerapi(e.target.value)
+            }}
+          />
+        </Form>
+        <ModalAction>
+          <label htmlFor="modal-edit" className="btn btn-accent btn-sm">
+            Kembali
+          </label>
+          <label
+            htmlFor="modal-edit"
+            className="btn btn-primary btn-sm"
+            onClick={() => {
+              editDetail()
+            }}
+          >
+            Edit Data
+          </label>
+        </ModalAction>
+      </Modal>
+      <ModalHapusPemeriksaan getDetailPasien={getDetailPasien} id={idDetail} />
       <Modal title={'Nota Transaksi Pasien'} id={'modal-transaksi'}>
         <div className="overflow-x-auto">
           <table className="table-compact table w-full">
