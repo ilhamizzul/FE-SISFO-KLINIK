@@ -7,17 +7,15 @@ import { rupiah } from '../../../utils/formatRupiah'
 
 const Invoice = () => {
   const router = useRouter()
-  const { id, data } = router.query
+  const { id, idPemeriksaan } = router.query
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [dataNota, setDataNota] = useState<DataNota>()
   let sum: number = 0
 
-  console.log(id, data);
-  
   const getNota = async () => {
     try {
       const res = await axios(
-        `${process.env.NEXT_PUBLIC_URL_HOST}/api/transaksi/${data}/${id}`
+        `${process.env.NEXT_PUBLIC_URL_HOST}/api/transaksi/${idPemeriksaan}/${id}`
       )
       setDataNota(res.data.value.obat)
       setIsLoading(false)
@@ -32,7 +30,7 @@ const Invoice = () => {
       window.print()
     }, 300)
     return () => clearTimeout(timer)
-  }, [id, data])
+  }, [id, idPemeriksaan])
 
   return (
     <div className="flex h-screen w-full flex-col items-center p-5">

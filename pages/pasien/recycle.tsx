@@ -8,7 +8,7 @@ import PageTitle from '../../components/PageTitle'
 import SectionTitle from '../../components/SectionTitle'
 import { Data } from '../../types/pasien'
 
-const RecyclePasien = () => {
+const Recycle = () => {
   const [data, setData] = useState<[]>()
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [currentPage, setCurrentPage] = useState<number>(0)
@@ -158,4 +158,4 @@ const RecyclePasien = () => {
   )
 }
 
-export default RecyclePasien
+export default Recycle

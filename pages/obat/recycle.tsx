@@ -9,7 +9,7 @@ import SectionTitle from '../../components/SectionTitle'
 import { Data } from '../../types/pasien'
 import { rupiah } from '../../utils/formatRupiah'
 
-const RecycleObat = () => {
+const Recycle = () => {
   const [dataRecycleObat, setDataRecycleObat] = useState<[]>()
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [currentPage, setCurrentPage] = useState<number>(0)
@@ -149,4 +149,4 @@ const RecycleObat = () => {
   )
 }
 
-export default RecycleObat
+export default Recycle
