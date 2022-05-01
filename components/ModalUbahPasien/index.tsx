@@ -13,7 +13,7 @@ interface ModalUbahPasienProps {
 }
 
 const ModalUbahPasien = ({ getDetailPasien, id }: ModalUbahPasienProps) => {
-  const [hasilPemeriksaan, setHasilPemeriksaan] = useState<string>()
+  const [hasilPemeriksaanUbah, setHasilPemeriksaanUbah] = useState<string>()
   const [diagnosis, setDiagnosis] = useState<string>()
   const [terapi, setTerapi] = useState<string>()
 
@@ -23,7 +23,7 @@ const ModalUbahPasien = ({ getDetailPasien, id }: ModalUbahPasienProps) => {
     axios
       .post(`${process.env.NEXT_PUBLIC_URL_HOST}/api/pemeriksaan/edit`, {
         TanggalPemeriksaan: date,
-        HasilPemeriksaan: hasilPemeriksaan,
+        HasilPemeriksaan: hasilPemeriksaanUbah,
         Diagnosis: diagnosis,
         Terapi: terapi,
         Id: id,
@@ -31,7 +31,7 @@ const ModalUbahPasien = ({ getDetailPasien, id }: ModalUbahPasienProps) => {
       .then(() => {
         getDetailPasien()
         toast.success('Data berhasil diubah!')
-        setHasilPemeriksaan('')
+        setHasilPemeriksaanUbah('')
         setDiagnosis('')
         setTerapi('')
       })
@@ -39,7 +39,7 @@ const ModalUbahPasien = ({ getDetailPasien, id }: ModalUbahPasienProps) => {
         getDetailPasien()
         toast.error('Data gagal diubah!')
         console.log(err)
-        setHasilPemeriksaan('')
+        setHasilPemeriksaanUbah('')
         setDiagnosis('')
         setTerapi('')
       })
@@ -50,9 +50,9 @@ const ModalUbahPasien = ({ getDetailPasien, id }: ModalUbahPasienProps) => {
       <Form>
         <LabelForm>Hasil Pemeriksaan</LabelForm>
         <Input
-          value={hasilPemeriksaan}
+          value={hasilPemeriksaanUbah}
           onChange={(e: ChangeEvent<HTMLInputElement>) => {
-            setHasilPemeriksaan(e.target.value)
+            setHasilPemeriksaanUbah(e.target.value)
           }}
         />
       </Form>
