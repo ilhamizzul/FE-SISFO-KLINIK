@@ -2,7 +2,7 @@ import axios from 'axios'
 import exportFromJSON from 'export-from-json'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
+import React, { ChangeEvent, useEffect, useState } from 'react'
 import { FaClipboardCheck, FaDollarSign } from 'react-icons/fa'
 import { HiPencilAlt, HiTrash } from 'react-icons/hi'
 import { toast } from 'react-toastify'
@@ -13,6 +13,7 @@ import LabelForm from '../../../components/LabelForm'
 import Layout from '../../../components/Layout'
 import Modal from '../../../components/Modal'
 import ModalAction from '../../../components/ModalAction'
+import ModalTambahPasien from '../../../components/ModalTambahPasien'
 import PageTitle from '../../../components/PageTitle'
 import SectionTitle from '../../../components/SectionTitle'
 import {
@@ -37,7 +38,7 @@ const DetailPemeriksaan = () => {
   const [idDetail, setIdDetail] = useState<number>()
   const [dataNota, setDataNota] = useState<DataNota>()
   const [dataObat, setDataObat] = useState<Data[]>()
-  const dataX = dataObat?.[currentPage].Data || []
+  const idPasien = id as string
 
   const getDetailPasien = async () => {
     try {
@@ -68,32 +69,6 @@ const DetailPemeriksaan = () => {
     } catch (err) {
       console.log(err)
     }
-  }
-
-  const addDetail = () => {
-    const date = new Date().toISOString()
-    const idPasien = id as string
-
-    axios
-      .post(`${process.env.NEXT_PUBLIC_URL_HOST}/api/pemeriksaan/add`, {
-        TanggalPemeriksaan: date,
-        HasilPemeriksaan: hasilPemeriksaan,
-        Diagnosis: diagnosis,
-        Terapi: terapi,
-        IdPasien: parseInt(idPasien),
-      })
-      .then(() => {
-        getDetailPasien()
-        toast.success('Data berhasil ditambahkan!')
-      })
-      .catch((err) => {
-        getDetailPasien()
-        toast.error('Data gagal ditambahkan!')
-        console.log(err)
-        setHasilPemeriksaan('')
-        setDiagnosis('')
-        setTerapi('')
-      })
   }
 
   const editDetail = () => {
@@ -136,7 +111,6 @@ const DetailPemeriksaan = () => {
       `https://apis-klinik.fanzru.dev/api/transaksi/${data.Id}/${data.IdPasien}`
     )
       .then((res) => {
-        console.log(res)
         setDataNota(res.data.value)
       })
       .catch((err) => console.log(err))
@@ -161,6 +135,8 @@ const DetailPemeriksaan = () => {
     setCurrentPage(tes - 1)
   }
 
+  
+  
   let allData: Array<object> = []
 
   detailPasien?.map((page: Data) => {
@@ -186,6 +162,8 @@ const DetailPemeriksaan = () => {
   }
 
   let sum: number = 0
+
+  const componentToPrint = React.useRef(null)
 
   useEffect(() => {
     getDetailPasien()
@@ -317,48 +295,7 @@ const DetailPemeriksaan = () => {
           </div>
         </div>
       </Layout>
-      <Modal title={'Tambah Data Pasien'} id={'modal-tambah'}>
-        <Form>
-          <LabelForm>Hasil Pemeriksaan</LabelForm>
-          <Input
-            value={hasilPemeriksaan}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              setHasilPemeriksaan(e.target.value)
-            }}
-          />
-        </Form>
-        <Form>
-          <LabelForm>Diagnosis</LabelForm>
-          <Input
-            value={diagnosis}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              setDiagnosis(e.target.value)
-            }}
-          />
-        </Form>
-        <Form>
-          <LabelForm>Terapi</LabelForm>
-          <Input
-            value={terapi}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              setTerapi(e.target.value)
-            }}
-          />
-        </Form>
-
-        <ModalAction>
-          <label htmlFor="modal-tambah" className="btn btn-accent btn-sm">
-            Kembali
-          </label>
-          <label
-            htmlFor="modal-tambah"
-            className="btn btn-primary btn-sm"
-            onClick={addDetail}
-          >
-            Tambah Data
-          </label>
-        </ModalAction>
-      </Modal>
+      <ModalTambahPasien getDetailPasien={getDetailPasien} id={idPasien} />
       <Modal title={'Ubah Data Pasien'} id={'modal-edit'}>
         <Form>
           <LabelForm>Hasil Pemeriksaan</LabelForm>
@@ -433,11 +370,13 @@ const DetailPemeriksaan = () => {
             </thead>
             <tbody>
               {dataNota?.obat.map((data: NotaObat, i: number) => {
-                let obat = dataX.find((elemen) => elemen.Id == data.IdObat)
+                // let obat = allObat.find((elemen) => elemen.Id == data.IdObat)
+
                 sum += data.Harga
+
                 return (
                   <tr key={i}>
-                    <td>{obat.Nama}</td>
+                    <td>{}</td>
                     <td>{data.RincianObat}</td>
                     <td align="center">{data.Jumlah}</td>
                     <td>{rupiah(data.Harga)}</td>
@@ -456,7 +395,17 @@ const DetailPemeriksaan = () => {
           <label htmlFor="modal-transaksi" className="btn btn-accent btn-sm">
             Close
           </label>
-          <label className="btn btn-secondary btn-sm">Print</label>
+          <Link
+            href={{
+              pathname: `/pasien/${id}/invoice`,
+              query: { tes: 'asd' },
+            }}
+            passHref
+          >
+            <a href="" target={'_blank'} className="btn btn-secondary btn-sm">
+              Print
+            </a>
+          </Link>
         </ModalAction>
       </Modal>
     </>

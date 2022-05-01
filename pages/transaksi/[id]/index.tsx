@@ -125,8 +125,9 @@ const DetailTransaksi = () => {
             onChange={inputHandler}
           />
         </div>
-        <div className="mt-4 grid grid-cols-1 gap-y-12 md:grid-cols-3 md:gap-x-6">
-          <div className="col-span-1 w-full rounded-md">
+        {/* <div className="mt-4 grid grid-cols-1 gap-y-12 md:grid-cols-3 md:gap-x-6"> */}
+        <div className="flex flex-col justify-between">
+          <div className="col-span-1 w-full rounded-md py-3">
             <table className="table-compact table w-full">
               <thead>
                 <tr>
@@ -180,7 +181,7 @@ const DetailTransaksi = () => {
               })}
             </div>
           </div>
-          <div className="col-span-2 w-full overflow-x-auto rounded-md">
+          <div className="col-span-2 w-full overflow-x-auto rounded-md py-3">
             <table className="table-compact table w-full">
               <thead>
                 <tr>

@@ -148,6 +148,7 @@ const ObatPage = () => {
                   <tr>
                     <th />
                     <th>Kode</th>
+                    <th>Id Obat</th>
                     <th>Nama</th>
                     <th>Harga Jual</th>
                     <th>Stok</th>
@@ -176,6 +177,7 @@ const ObatPage = () => {
                                   : i + 1 + 10 * currentPage}
                               </th>
                               <td>{tes.Kode}</td>
+                              <td>{tes.Id}</td>
                               <td>{tes.Nama}</td>
                               <td>{rupiah(tes.HargaJual)}</td>
                               <td>{tes.Sisa}</td>
