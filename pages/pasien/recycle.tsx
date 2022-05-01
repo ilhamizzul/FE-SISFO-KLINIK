@@ -1,26 +1,23 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
-import Layout from '../components/Layout'
-import Modal from '../components/Modal'
-import ModalAction from '../components/ModalAction'
-import PageTitle from '../components/PageTitle'
-import SectionTitle from '../components/SectionTitle'
+import Layout from '../../components/Layout'
+import Modal from '../../components/Modal'
+import ModalAction from '../../components/ModalAction'
+import PageTitle from '../../components/PageTitle'
+import SectionTitle from '../../components/SectionTitle'
+import { Data } from '../../types/pasien'
 
 const Recycle = () => {
   const [data, setData] = useState<[]>()
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [currentPage, setCurrentPage] = useState<number>(0)
   const [idPemeriksaan, setIdPemeriksaan] = useState<number>()
-  type Data = {
-    Pages: number
-    Data: any[]
-  }
 
   const getDataRecycle = async () => {
     try {
       const res = await axios(
-        'https://apis-klinik.fanzru.dev/api/pasien/sampah'
+        `${process.env.NEXT_PUBLIC_URL_HOST}/api/pasien/sampah`
       )
       setData(res.data.value)
       setIsLoading(false)
@@ -34,9 +31,9 @@ const Recycle = () => {
     getDataRecycle()
   }
 
-  const activatePasien = (id: number) => {
+  const activatePasien = (id?: number) => {
     axios
-      .post('https://apis-klinik.fanzru.dev/api/pasien/aktivasi', {
+      .post(`${process.env.NEXT_PUBLIC_URL_HOST}/api/pasien/aktivasi`, {
         Id: id,
       })
       .then(() => {
@@ -55,9 +52,9 @@ const Recycle = () => {
 
   return (
     <>
-      <PageTitle>Recycle Bin</PageTitle>
+      <PageTitle>Recycle Bin Pasien</PageTitle>
       <Layout>
-        <SectionTitle>Recycle Bin</SectionTitle>
+        <SectionTitle>Recycle Bin Pasien</SectionTitle>
         <div className="mt-4">
           <div className="overflow-x-auto">
             <div className="overflow-x-auto">
@@ -67,8 +64,8 @@ const Recycle = () => {
                     <th />
                     <th>Nama</th>
                     <th>Alamat</th>
-                    <th>Tempat Lahir</th>
                     <th>Tanggal Lahir</th>
+                    <th>Tempat Lahir</th>
                     <th>Kepala Keluarga</th>
                     <th>Jenis Kelamin</th>
                     <th className="text-center">Aksi</th>
@@ -93,8 +90,8 @@ const Recycle = () => {
                               <th>{i + 1}</th>
                               <td>{tes.NamaPasien}</td>
                               <td>{tes.Alamat}</td>
-                              <td>{tes.TempatLahir}</td>
                               <td>{tes.TanggalLahir.substring(0, 10)}</td>
+                              <td>{tes.TempatLahir}</td>
                               <td>{tes.NamaKepalaKeluarga}</td>
                               <td>
                                 {tes.JenisKelamin === 'L'
@@ -149,7 +146,7 @@ const Recycle = () => {
           <label
             htmlFor="modal-activate"
             onClick={() => {
-              activatePasien(idPemeriksaan!)
+              activatePasien(idPemeriksaan)
             }}
             className="btn btn-primary btn-sm"
           >

@@ -1,9 +1,12 @@
 import { HiTrash, HiOutlineClipboardList } from 'react-icons/hi'
-import { FaRegHospital, FaUserInjured } from 'react-icons/fa'
+import {
+  FaRegHospital,
+  FaUserInjured,
+  FaBriefcaseMedical,
+} from 'react-icons/fa'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { ImStatsDots } from 'react-icons/im'
-import { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { changeSidebar, selectSidebarValue } from '../../redux/sidebarSlice'
 
@@ -11,12 +14,7 @@ const Sidebar = () => {
   const router = useRouter()
   const dispatch = useDispatch()
   const urlString = router.pathname
-  const [isOPen, setIsOPen] = useState(false)
   const sidebarValue = useSelector(selectSidebarValue)
-  const collapse = () => {
-    setIsOPen(!isOPen)
-    dispatch(changeSidebar(!sidebarValue))
-  }
 
   return (
     <div className="drawer-side">
@@ -36,28 +34,88 @@ const Sidebar = () => {
             </a>
           </Link>
         </li>
-        <li onClick={collapse}>
+        <li
+          onClick={() => {
+            dispatch(
+              changeSidebar({
+                pasien: !sidebarValue.pasien,
+                obat: sidebarValue.obat,
+              })
+            )
+          }}
+        >
           <a>
             <FaUserInjured />
             <span>Pasien</span>
           </a>
         </li>
-        <li className={sidebarValue ? 'ml-3 block' : 'hidden'}>
-          <Link href={'/pasien'} passHref>
-            <a className={urlString == '/pasien' ? 'active' : ''}>
-              <HiOutlineClipboardList />
-              Data Pasien
-            </a>
-          </Link>
+        <div
+          className={
+            sidebarValue.pasien ||
+            urlString == '/pasien' ||
+            urlString == '/pasien/recycle'
+              ? 'block'
+              : 'hidden'
+          }
+        >
+          <li className={'ml-3'}>
+            <Link href={'/pasien'} passHref>
+              <a className={urlString == '/pasien' ? 'active' : ''}>
+                <HiOutlineClipboardList />
+                Data Pasien
+              </a>
+            </Link>
+          </li>
+          <li className={'ml-3'}>
+            <Link href={'/pasien/recycle'} passHref>
+              <a className={urlString == '/pasien/recycle' ? 'active' : ''}>
+                <HiTrash />
+                Recycle
+              </a>
+            </Link>
+          </li>
+        </div>
+        <li
+          onClick={() => {
+            dispatch(
+              changeSidebar({
+                pasien: sidebarValue.pasien,
+                obat: !sidebarValue.obat,
+              })
+            )
+          }}
+        >
+          <a>
+            <FaBriefcaseMedical />
+            <span>Obat</span>
+          </a>
         </li>
-        <li className={sidebarValue ? 'ml-3 block' : 'hidden'}>
-          <Link href={'/recycle'} passHref>
-            <a className={urlString == '/recycle' ? 'active' : ''}>
-              <HiTrash />
-              Recycle
-            </a>
-          </Link>
-        </li>
+        <div
+          className={
+            sidebarValue.obat ||
+            urlString == '/obat' ||
+            urlString == '/obat/recycle'
+              ? 'block'
+              : 'hidden'
+          }
+        >
+          <li className={'ml-3'}>
+            <Link href={'/obat'} passHref>
+              <a className={urlString == '/obat' ? 'active' : ''}>
+                <HiOutlineClipboardList />
+                Data Obat
+              </a>
+            </Link>
+          </li>
+          <li className={'ml-3'}>
+            <Link href={'/obat/recycle'} passHref>
+              <a className={urlString == '/obat/recycle' ? 'active' : ''}>
+                <HiTrash />
+                Recycle
+              </a>
+            </Link>
+          </li>
+        </div>
       </ul>
     </div>
   )

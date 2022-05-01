@@ -1,5 +1,4 @@
 import axios from 'axios'
-import exportFromJSON from 'export-from-json'
 import type { NextPage } from 'next'
 import Link from 'next/link'
 import React, { ChangeEvent, useEffect, useState } from 'react'
@@ -16,6 +15,7 @@ import PageTitle from '../../components/PageTitle'
 import SectionTitle from '../../components/SectionTitle'
 import Select from '../../components/Select'
 import { Data, Pasien } from '../../types/pasien'
+import { exportData } from '../../utils/exportData'
 
 const Home: NextPage = () => {
   const [name, setName] = useState<string>()
@@ -28,7 +28,7 @@ const Home: NextPage = () => {
   const [currentPage, setCurrentPage] = useState<number>(0)
   const [idPemeriksaan, setIdPemeriksaan] = useState<number>()
   const [isLoading, setIsLoading] = useState<boolean>(true)
-  
+
   const getAllData = async () => {
     try {
       const res = await axios(`${process.env.NEXT_PUBLIC_URL_HOST}/api/pasien`)
@@ -41,7 +41,7 @@ const Home: NextPage = () => {
 
   const addPasien = () => {
     const date = tanggalLahir ? new Date(tanggalLahir).toISOString() : ''
-    
+
     axios
       .post(`${process.env.NEXT_PUBLIC_URL_HOST}/api/pasien/add`, {
         NamaPasien: name,
@@ -54,21 +54,13 @@ const Home: NextPage = () => {
       .then(() => {
         getAllData()
         toast.success('Data berhasil ditambahkan!')
-        setName('')
-        setAlamat('')
-        setTempatLahir('')
-        setTanggalLahir('')
-        setKepalaKeluarga('')
+        resetState()
       })
       .catch((err) => {
         getAllData()
         toast.error('Data gagal ditambahkan!')
         console.log(err)
-        setName('')
-        setAlamat('')
-        setTempatLahir('')
-        setTanggalLahir('')
-        setKepalaKeluarga('')
+        resetState()
       })
   }
 
@@ -87,16 +79,13 @@ const Home: NextPage = () => {
       .then(() => {
         getAllData()
         toast.success('Data berhasil ditambahkan!')
+        resetState()
       })
       .catch((err) => {
         getAllData()
         toast.error('Data gagal ditambahkan!')
         console.log(err)
-        setName('')
-        setAlamat('')
-        setTempatLahir('')
-        setTanggalLahir('')
-        setKepalaKeluarga('')
+        resetState()
       })
   }
 
@@ -109,19 +98,28 @@ const Home: NextPage = () => {
     setJenisKelamin(data.JenisKelamin)
   }
 
-  const deletePasien = (id: number) => {
+  const deletePasien = async (id: number) => {
     axios
       .post(`${process.env.NEXT_PUBLIC_URL_HOST}/api/pasien/hapus`, {
         Id: id,
       })
-      .then(() => {
+      .then((res) => {
         getAllData()
         toast.success('Data pasien berhasil dihapus!')
+        console.log(res)
       })
-      .catch(() => {
-        getAllData()
+      .catch((err) => {
+        console.log(err)
         toast.error('Data pasien gagal dihapus!')
       })
+  }
+
+  const resetState = () => {
+    setName('')
+    setAlamat('')
+    setTempatLahir('')
+    setTanggalLahir('')
+    setKepalaKeluarga('')
   }
 
   const pagination = (tes: number) => {
@@ -135,16 +133,13 @@ const Home: NextPage = () => {
   let allData: Array<object> = []
 
   dataPasien?.map((page: Data) => {
-    return page.Data.map((tes, i) => {
+    return page.Data.map((tes) => {
       allData.push(tes)
     })
   })
 
   const handleExport = () => {
-    const data = allData
-    const fileName = 'Data-Pasien'
-    const exportType = 'xls'
-    const fields = [
+    exportData(allData, 'Data-Pasien', [
       'Alamat',
       'NamaPasien',
       'TempatLahir',
@@ -152,12 +147,11 @@ const Home: NextPage = () => {
       'NamaKepalaKeluarga',
       'Id',
       'JenisKelamin',
-    ]
-    exportFromJSON({ data, fileName, exportType, fields })
+    ])
   }
 
   return (
-    <> 
+    <>
       <PageTitle>Pasien</PageTitle>
 
       <Layout>
@@ -202,7 +196,11 @@ const Home: NextPage = () => {
                         return page.Data.map((tes, i) => {
                           return (
                             <tr key={i}>
-                              <th>{i + 1}</th>
+                              <th>
+                                {currentPage == 0
+                                  ? i + 1
+                                  : i + 1 + 10 * currentPage}
+                              </th>
                               <td>{tes.NamaPasien}</td>
                               <td>{tes.Alamat}</td>
                               <td>{tes.TempatLahir}</td>

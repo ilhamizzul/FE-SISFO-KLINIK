@@ -2,23 +2,33 @@ import axios from 'axios'
 import exportFromJSON from 'export-from-json'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { ChangeEvent, useEffect, useState } from 'react'
-import { HiEye, HiPencilAlt, HiTrash } from 'react-icons/hi'
+import React, { ChangeEvent, useEffect, useState } from 'react'
+import { FaClipboardCheck, FaDollarSign } from 'react-icons/fa'
+import { HiPencilAlt, HiTrash } from 'react-icons/hi'
 import { toast } from 'react-toastify'
-
 import Form from '../../../components/Form'
 import Input from '../../../components/Input'
 import LabelForm from '../../../components/LabelForm'
+
 import Layout from '../../../components/Layout'
 import Modal from '../../../components/Modal'
 import ModalAction from '../../../components/ModalAction'
+import ModalHapusPemeriksaan from '../../../components/ModalHapusPemeriksaan'
+import ModalTambahPemeriksaan from '../../../components/ModalTambahPemeriksaan'
 import PageTitle from '../../../components/PageTitle'
 import SectionTitle from '../../../components/SectionTitle'
-import { Data, Pasien, DetailPasien } from '../../../types/pasien'
+import {
+  Data,
+  Pasien,
+  DetailPasien,
+  DataNota,
+  Obat,
+} from '../../../types/pasien'
+import { rupiah } from '../../../utils/formatRupiah'
 
 const DetailPemeriksaan = () => {
   const router = useRouter()
-  const data = router.query
+  const { id } = router.query
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [detailPasien, setDetailPasien] = useState<[]>()
   const [pasien, setPasien] = useState<Pasien>()
@@ -27,11 +37,15 @@ const DetailPemeriksaan = () => {
   const [diagnosis, setDiagnosis] = useState<string>()
   const [terapi, setTerapi] = useState<string>()
   const [idDetail, setIdDetail] = useState<number>()
+  const [dataNota, setDataNota] = useState<DataNota>()
+  const [_dataObat, setDataObat] = useState<Data[]>()
+  const idPasien = id as string
+  const [idPemeriksaan, setIdPemeriksaan] = useState<number>(0)
 
   const getDetailPasien = async () => {
     try {
       const pasien = await axios(
-        `${process.env.NEXT_PUBLIC_URL_HOST}/api/pemeriksaan/pasien?id=${data.id}`
+        `${process.env.NEXT_PUBLIC_URL_HOST}/api/pemeriksaan/pasien?id=${id}`
       )
       setDetailPasien(pasien.data.value)
       setIsLoading(false)
@@ -41,7 +55,7 @@ const DetailPemeriksaan = () => {
   }
 
   const getPasien = () => {
-    axios(`${process.env.NEXT_PUBLIC_URL_HOST}/api/pasien/detail?id=${data.id}`)
+    axios(`${process.env.NEXT_PUBLIC_URL_HOST}/api/pasien/detail?id=${id}`)
       .then((res) => {
         setPasien(res.data.value)
       })
@@ -50,30 +64,13 @@ const DetailPemeriksaan = () => {
       })
   }
 
-  const addDetail = () => {
-    const date = new Date().toISOString()
-    const idPasien = data.id as string
-
-    axios
-      .post(`${process.env.NEXT_PUBLIC_URL_HOST}/api/pemeriksaan/add`, {
-        TanggalPemeriksaan: date,
-        HasilPemeriksaan: hasilPemeriksaan,
-        Diagnosis: diagnosis,
-        Terapi: terapi,
-        IdPasien: parseInt(idPasien),
-      })
-      .then(() => {
-        getDetailPasien()
-        toast.success('Data berhasil ditambahkan!')
-      })
-      .catch((err) => {
-        getDetailPasien()
-        toast.error('Data gagal ditambahkan!')
-        console.log(err)
-        setHasilPemeriksaan('')
-        setDiagnosis('')
-        setTerapi('')
-      })
+  const getObat = async () => {
+    try {
+      const res = await axios(`${process.env.NEXT_PUBLIC_URL_HOST}/api/obat`)
+      setDataObat(res.data.value)
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   const editDetail = () => {
@@ -111,19 +108,15 @@ const DetailPemeriksaan = () => {
     setTerapi(data.Terapi)
   }
 
-  const deleteDetail = (id: number) => {
-    axios
-      .delete(
-        `${process.env.NEXT_PUBLIC_URL_HOST}/api/pemeriksaan/hapus?id=${id}`
-      )
+  const handleNota = (data: DetailPasien) => {
+    axios(
+      `https://apis-klinik.fanzru.dev/api/transaksi/${data.Id}/${data.IdPasien}`
+    )
       .then((res) => {
-        getDetailPasien()
-        toast.success('Data berhasil dihapus!')
+        setDataNota(res.data.value.obat)
+        setIdPemeriksaan(data.Id)
       })
-      .catch((err) => {
-        console.log(err)
-        toast.error('Data gagal dihapus!')
-      })
+      .catch((err) => console.log(err))
   }
 
   const pagination = (tes: number) => {
@@ -133,7 +126,7 @@ const DetailPemeriksaan = () => {
   let allData: Array<object> = []
 
   detailPasien?.map((page: Data) => {
-    return page.Data.map((tes, i) => {
+    return page.Data.map((tes) => {
       allData.push(tes)
     })
   })
@@ -154,9 +147,12 @@ const DetailPemeriksaan = () => {
     exportFromJSON({ data, fileName, exportType, fields })
   }
 
+  let sum: number = 0
+
   useEffect(() => {
     getDetailPasien()
     getPasien()
+    getObat()
   }, [])
 
   return (
@@ -184,7 +180,6 @@ const DetailPemeriksaan = () => {
                     <th>Hasil Pemeriksaan</th>
                     <th>Diagnosis</th>
                     <th>Terapi</th>
-                    <th>Status Transaksi</th>
                     <th className="text-center">Aksi</th>
                   </tr>
                 </thead>
@@ -215,14 +210,29 @@ const DetailPemeriksaan = () => {
                               <td>{tes.HasilPemeriksaan}</td>
                               <td>{tes.Diagnosis}</td>
                               <td>{tes.Terapi}</td>
-                              <td>{tes.StatusTransaksi}</td>
                               <td className="items-center justify-center">
                                 <div className="flex items-center justify-center">
-                                  <Link href={`/pasien/${tes.Id}`} passHref>
-                                    <label className="btn btn-warning btn-xs rounded-r-none">
-                                      <HiEye />
+                                  {tes.StatusTransaksi == 'sudah' ? (
+                                    <label
+                                      className="btn btn-primary btn-xs rounded-r-none"
+                                      htmlFor={'modal-transaksi'}
+                                      onClick={() => handleNota(tes)}
+                                    >
+                                      <FaClipboardCheck />
                                     </label>
-                                  </Link>
+                                  ) : (
+                                    <Link
+                                      href={{
+                                        pathname: `/transaksi/${tes.Id}`,
+                                        query: { idPasien: tes.IdPasien },
+                                      }}
+                                      passHref
+                                    >
+                                      <label className="btn btn-warning btn-xs rounded-r-none">
+                                        <FaDollarSign />
+                                      </label>
+                                    </Link>
+                                  )}
                                   <label
                                     className="btn btn-secondary btn-xs rounded-none"
                                     htmlFor={'modal-edit'}
@@ -253,7 +263,7 @@ const DetailPemeriksaan = () => {
           <div className="btn-group mt-4">
             {detailPasien?.map((page: Data, i: number) => {
               return (
-                <>
+                <div key={i}>
                   <button
                     className={`btn btn-sm ${
                       currentPage + 1 == page.Pages ? 'btn-active' : ''
@@ -263,54 +273,13 @@ const DetailPemeriksaan = () => {
                   >
                     {page.Pages}
                   </button>
-                </>
+                </div>
               )
             })}
           </div>
         </div>
       </Layout>
-      <Modal title={'Tambah Data Pasien'} id={'modal-tambah'}>
-        <Form>
-          <LabelForm>Hasil Pemeriksaan</LabelForm>
-          <Input
-            value={hasilPemeriksaan}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              setHasilPemeriksaan(e.target.value)
-            }}
-          />
-        </Form>
-        <Form>
-          <LabelForm>Diagnosis</LabelForm>
-          <Input
-            value={diagnosis}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              setDiagnosis(e.target.value)
-            }}
-          />
-        </Form>
-        <Form>
-          <LabelForm>Terapi</LabelForm>
-          <Input
-            value={terapi}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              setTerapi(e.target.value)
-            }}
-          />
-        </Form>
-
-        <ModalAction>
-          <label htmlFor="modal-tambah" className="btn btn-accent btn-sm">
-            Kembali
-          </label>
-          <label
-            htmlFor="modal-tambah"
-            className="btn btn-primary btn-sm"
-            onClick={addDetail}
-          >
-            Tambah Data
-          </label>
-        </ModalAction>
-      </Modal>
+      <ModalTambahPemeriksaan getDetailPasien={getDetailPasien} id={idPasien} />
       <Modal title={'Ubah Data Pasien'} id={'modal-edit'}>
         <Form>
           <LabelForm>Hasil Pemeriksaan</LabelForm>
@@ -339,7 +308,6 @@ const DetailPemeriksaan = () => {
             }}
           />
         </Form>
-
         <ModalAction>
           <label htmlFor="modal-edit" className="btn btn-accent btn-sm">
             Kembali
@@ -355,21 +323,64 @@ const DetailPemeriksaan = () => {
           </label>
         </ModalAction>
       </Modal>
-      <Modal title={'Hapus Data Pasien'} id={'modal-hapus'}>
-        <span>Yakin ingin menghapus data pasien?</span>
+      <ModalHapusPemeriksaan getDetailPasien={getDetailPasien} id={idDetail} />
+      <Modal title={'Nota Transaksi Pasien'} id={'modal-transaksi'}>
+        <div className="overflow-x-auto">
+          <table className="table-compact table w-full">
+            <thead>
+              <tr>
+                <th>Nama Obat</th>
+                <th>Rincian Obat</th>
+                <th align="center">Jumlah Obat</th>
+                <th>Harga</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {dataNota?.detail_obat.map((data: Obat, i: number) => {
+                sum += data.HargaJual * dataNota.detail_transasksi[i].Jumlah
+
+                console.log(data.Id)
+
+                return (
+                  <tr key={i}>
+                    <td>{data.Nama}</td>
+                    <td>{dataNota.detail_transasksi[i].RincianObat}</td>
+                    <td align="center">
+                      {dataNota.detail_transasksi[i].Jumlah}
+                    </td>
+                    <td>{rupiah(data.HargaJual)}</td>
+                    <td>
+                      {rupiah(
+                        data.HargaJual * dataNota.detail_transasksi[i].Jumlah
+                      )}
+                    </td>
+                  </tr>
+                )
+              })}
+              <tr>
+                <td className="font-bold">Total Harga : </td>
+                <td colSpan={3}></td>
+                <td className="font-bold">{rupiah(sum)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <ModalAction>
-          <label htmlFor="modal-hapus" className="btn btn-accent btn-sm">
-            Kembali
+          <label htmlFor="modal-transaksi" className="btn btn-accent btn-sm">
+            Close
           </label>
-          <label
-            htmlFor="modal-hapus"
-            className="btn btn-primary btn-sm"
-            onClick={() => {
-              deleteDetail(idDetail!)
+          <Link
+            href={{
+              pathname: `/pasien/${id}/[slug]`,
+              query: { slug: 'invoice', data: idPemeriksaan },
             }}
+            passHref
           >
-            Hapus Data
-          </label>
+            <a href="" target={'_blank'} className="btn btn-secondary btn-sm">
+              Print
+            </a>
+          </Link>
         </ModalAction>
       </Modal>
     </>

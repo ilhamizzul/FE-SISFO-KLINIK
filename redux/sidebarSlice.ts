@@ -4,7 +4,10 @@ import { RootState } from './globalStore'
 const sidebarSlice = createSlice({
   name: 'sidebar',
   initialState: {
-    value: false,
+    value: {
+      pasien: false,
+      obat: false
+    },
   },
   reducers: {
     changeSidebar: (state, action) => {

@@ -22,3 +22,38 @@ export type DetailPasien = {
   StatusTransaksi: string
   IdPasien: number
 }
+
+export type Obat = {
+  Id: number
+  Kode: string
+  Nama: string
+  HargaJual: number
+  Masuk: number
+  Keluar: number
+  Sisa: number
+}
+
+export type Transaksi = {
+  RincianObat: String
+  Jumlah: number
+  Harga: number
+  // Stok: number
+  // Id: number
+  IdObat: number
+  IdPemeriksaan: number
+}
+
+export type NotaObat = {
+  Id: number
+  RincianObat: String
+  Jumlah: number
+  Harga: number
+  IdObat: number
+  IdPemeriksaan: number
+  DeleteStatus: boolean
+}
+
+export type DataNota = {
+  detail_obat: Obat[]
+  detail_transasksi: Transaksi[]
+}

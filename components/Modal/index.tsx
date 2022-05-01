@@ -11,7 +11,7 @@ const Modal: FC<Modal> = ({children, id, title}) => {
     <div>
       <input type="checkbox" id={id} className="modal-toggle" />
       <div className="modal">
-        <div className="modal-box">
+        <div className="modal-box max-w-2xl">
           <h3 className="text-lg font-bold">{title}</h3>
           <div className="py-4">{children}</div>
         </div>
