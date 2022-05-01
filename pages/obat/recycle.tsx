@@ -9,7 +9,7 @@ import SectionTitle from '../../components/SectionTitle'
 import { Data } from '../../types/pasien'
 import { rupiah } from '../../utils/formatRupiah'
 
-const RecycleObatPage = () => {
+const Recycle = () => {
   const [data, setData] = useState<[]>()
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [currentPage, setCurrentPage] = useState<number>(0)
@@ -32,7 +32,7 @@ const RecycleObatPage = () => {
     getObatRecycle()
   }
 
-  const activateObat = (id: number) => {
+  const activateObat = (id?: number) => {
     axios
       .patch(`${process.env.NEXT_PUBLIC_URL_HOST}/api/obat/activated/${id}`)
       .then(() => {
@@ -137,7 +137,7 @@ const RecycleObatPage = () => {
           <label
             htmlFor="modal-activate"
             onClick={() => {
-              activateObat(idObat!)
+              activateObat(idObat)
             }}
             className="btn btn-primary btn-sm"
           >
@@ -149,4 +149,4 @@ const RecycleObatPage = () => {
   )
 }
 
-export default RecycleObatPage
+export default Recycle

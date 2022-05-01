@@ -31,7 +31,7 @@ const Recycle = () => {
     getDataRecycle()
   }
 
-  const activatePasien = (id: number) => {
+  const activatePasien = (id?: number) => {
     axios
       .post(`${process.env.NEXT_PUBLIC_URL_HOST}/api/pasien/aktivasi`, {
         Id: id,
@@ -146,7 +146,7 @@ const Recycle = () => {
           <label
             htmlFor="modal-activate"
             onClick={() => {
-              activatePasien(idPemeriksaan!)
+              activatePasien(idPemeriksaan)
             }}
             className="btn btn-primary btn-sm"
           >

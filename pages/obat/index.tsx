@@ -312,7 +312,7 @@ const ObatPage = () => {
           <label
             htmlFor="modal-hapus"
             onClick={() => {
-              deleteObat(idObat!)
+              deleteObat(idObat)
             }}
             className="btn btn-primary btn-sm"
           >
