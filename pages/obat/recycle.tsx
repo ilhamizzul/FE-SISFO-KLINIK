@@ -129,7 +129,7 @@ const RecycleObatPage = () => {
         </div>
       </Layout>
       <Modal title={'Aktifkan Data Obat'} id={'modal-activate'}>
-        <span>Yakin ingin mengaktifkan data pasien?</span>
+        <span>Yakin ingin mengaktifkan data obat?</span>
         <ModalAction>
           <label htmlFor="modal-activate" className="btn btn-accent btn-sm">
             Kembali
