@@ -7,12 +7,12 @@ import LabelForm from '../LabelForm'
 import Modal from '../Modal'
 import ModalAction from '../ModalAction'
 
-interface modalUbahPasienProps {
+interface ModalUbahPasienProps {
   getDetailPasien: () => void
   id: string
 }
 
-const ModalUbahPasien = ({ getDetailPasien, id }: modalUbahPasienProps) => {
+const ModalUbahPasien = ({ getDetailPasien, id }: ModalUbahPasienProps) => {
   const [hasilPemeriksaan, setHasilPemeriksaan] = useState<string>()
   const [diagnosis, setDiagnosis] = useState<string>()
   const [terapi, setTerapi] = useState<string>()

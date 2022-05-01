@@ -4,12 +4,12 @@ import { toast } from 'react-toastify'
 import Modal from '../Modal'
 import ModalAction from '../ModalAction'
 
-interface modalProps {
+interface ModalHapusPasienProps {
   getDetailPasien: () => void
   id?: number
 }
 
-const ModalHapusPasien = ({ getDetailPasien, id }: modalProps) => {
+const ModalHapusPasien = ({ getDetailPasien, id }: ModalHapusPasienProps) => {
   const deleteDetail = (idPemeriksaan: number) => {
     axios
       .delete(

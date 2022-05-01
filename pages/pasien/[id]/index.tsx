@@ -2,14 +2,10 @@ import axios from 'axios'
 import exportFromJSON from 'export-from-json'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { ChangeEvent, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FaClipboardCheck, FaDollarSign } from 'react-icons/fa'
 import { HiPencilAlt, HiTrash } from 'react-icons/hi'
-import { toast } from 'react-toastify'
 
-import Form from '../../../components/Form'
-import Input from '../../../components/Input'
-import LabelForm from '../../../components/LabelForm'
 import Layout from '../../../components/Layout'
 import Modal from '../../../components/Modal'
 import ModalAction from '../../../components/ModalAction'
@@ -39,7 +35,7 @@ const DetailPemeriksaan = () => {
   const [_terapi, setTerapi] = useState<string>()
   const [idDetail, setIdDetail] = useState<number>()
   const [dataNota, setDataNota] = useState<DataNota>()
-  const [dataObat, setDataObat] = useState<Data[]>()
+  const [_dataObat, setDataObat] = useState<Data[]>()
   const idPasien = id as string
 
   const getDetailPasien = async () => {
