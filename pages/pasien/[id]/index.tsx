@@ -13,6 +13,7 @@ import LabelForm from '../../../components/LabelForm'
 import Layout from '../../../components/Layout'
 import Modal from '../../../components/Modal'
 import ModalAction from '../../../components/ModalAction'
+import ModalHapusPasien from '../../../components/ModalHapusPasien'
 import ModalTambahPasien from '../../../components/ModalTambahPasien'
 import ModalUbahPasien from '../../../components/ModalUbahPasien'
 import PageTitle from '../../../components/PageTitle'
@@ -33,9 +34,9 @@ const DetailPemeriksaan = () => {
   const [detailPasien, setDetailPasien] = useState<[]>()
   const [pasien, setPasien] = useState<Pasien>()
   const [currentPage, setCurrentPage] = useState<number>(0)
-  const [hasilPemeriksaan, setHasilPemeriksaan] = useState<string>()
-  const [diagnosis, setDiagnosis] = useState<string>()
-  const [terapi, setTerapi] = useState<string>()
+  const [_hasilPemeriksaan, setHasilPemeriksaan] = useState<string>()
+  const [_diagnosis, setDiagnosis] = useState<string>()
+  const [_terapi, setTerapi] = useState<string>()
   const [idDetail, setIdDetail] = useState<number>()
   const [dataNota, setDataNota] = useState<DataNota>()
   const [dataObat, setDataObat] = useState<Data[]>()
@@ -89,21 +90,6 @@ const DetailPemeriksaan = () => {
       .catch((err) => console.log(err))
   }
 
-  const deleteDetail = (idPemeriksaan: number) => {
-    axios
-      .delete(
-        `${process.env.NEXT_PUBLIC_URL_HOST}/api/pemeriksaan/hapus?id=${idPemeriksaan}`
-      )
-      .then(() => {
-        getDetailPasien()
-        toast.success('Data berhasil dihapus!')
-      })
-      .catch((err) => {
-        console.log(err)
-        toast.error('Data gagal dihapus!')
-      })
-  }
-
   const pagination = (tes: number) => {
     setCurrentPage(tes - 1)
   }
@@ -133,8 +119,6 @@ const DetailPemeriksaan = () => {
   }
 
   let sum: number = 0
-
-  const componentToPrint = React.useRef(null)
 
   useEffect(() => {
     getDetailPasien()
@@ -268,23 +252,7 @@ const DetailPemeriksaan = () => {
       </Layout>
       <ModalTambahPasien getDetailPasien={getDetailPasien} id={idPasien} />
       <ModalUbahPasien getDetailPasien={getDetailPasien} id={idPasien} />
-      <Modal title={'Hapus Data Pasien'} id={'modal-hapus'}>
-        <span>Yakin ingin menghapus data pasien?</span>
-        <ModalAction>
-          <label htmlFor="modal-hapus" className="btn btn-accent btn-sm">
-            Kembali
-          </label>
-          <label
-            htmlFor="modal-hapus"
-            className="btn btn-primary btn-sm"
-            onClick={() => {
-              deleteDetail(idDetail!)
-            }}
-          >
-            Hapus Data
-          </label>
-        </ModalAction>
-      </Modal>
+      <ModalHapusPasien getDetailPasien={getDetailPasien} id={idDetail} />
       <Modal title={'Nota Transaksi Pasien'} id={'modal-transaksi'}>
         <div className="overflow-x-auto">
           <table className="table-compact table w-full">
