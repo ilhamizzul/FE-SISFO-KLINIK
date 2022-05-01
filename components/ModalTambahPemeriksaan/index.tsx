@@ -13,32 +13,31 @@ interface ModalTambahPasienProps {
 }
 
 const ModalTambahPasien = ({ getDetailPasien, id }: ModalTambahPasienProps) => {
-  const [hasilPemeriksaan, setHasilPemeriksaan] = useState<string>()
-  const [diagnosis, setDiagnosis] = useState<string>()
-  const [terapi, setTerapi] = useState<string>()
+  const [hasilPemeriksaanTambah, setHasilPemeriksaanTambah] = useState<string>()
+  const [diagnosisTambah, setDiagnosisTambah] = useState<string>()
+  const [terapiTambah, setTerapiTambah] = useState<string>()
 
-  const addDetail = () => {
-    const date = new Date().toISOString()
+  const tambahDetail = () => {
+    const dateTambah = new Date().toISOString()
     
-    axios
-      .post(`${process.env.NEXT_PUBLIC_URL_HOST}/api/pemeriksaan/add`, {
-        TanggalPemeriksaan: date,
-        HasilPemeriksaan: hasilPemeriksaan,
-        Diagnosis: diagnosis,
-        Terapi: terapi,
+    axios.post(`${process.env.NEXT_PUBLIC_URL_HOST}/api/pemeriksaan/add`, {
+        TanggalPemeriksaan: dateTambah,
+        HasilPemeriksaan: hasilPemeriksaanTambah,
+        Diagnosis: diagnosisTambah,
+        Terapi: terapiTambah,
         IdPasien: parseInt(id),
       })
       .then(() => {
         getDetailPasien()
-        toast.success('Data berhasil ditambahkan!')
+        toast.success('Data pemeriksaan berhasil ditambahkan!')
       })
       .catch((err) => {
         getDetailPasien()
-        toast.error('Data gagal ditambahkan!')
+        toast.error('Data pemeriksaan gagal ditambahkan!')
         console.log(err)
-        setHasilPemeriksaan('')
-        setDiagnosis('')
-        setTerapi('')
+        setHasilPemeriksaanTambah('')
+        setDiagnosisTambah('')
+        setTerapiTambah('')
       })
   }
 
@@ -47,27 +46,27 @@ const ModalTambahPasien = ({ getDetailPasien, id }: ModalTambahPasienProps) => {
       <Form>
         <LabelForm>Hasil Pemeriksaan</LabelForm>
         <Input
-          value={hasilPemeriksaan}
+          value={hasilPemeriksaanTambah}
           onChange={(e: ChangeEvent<HTMLInputElement>) => {
-            setHasilPemeriksaan(e.target.value)
+            setHasilPemeriksaanTambah(e.target.value)
           }}
         />
       </Form>
       <Form>
         <LabelForm>Diagnosis</LabelForm>
         <Input
-          value={diagnosis}
+          value={diagnosisTambah}
           onChange={(e: ChangeEvent<HTMLInputElement>) => {
-            setDiagnosis(e.target.value)
+            setDiagnosisTambah(e.target.value)
           }}
         />
       </Form>
       <Form>
         <LabelForm>Terapi</LabelForm>
         <Input
-          value={terapi}
+          value={terapiTambah}
           onChange={(e: ChangeEvent<HTMLInputElement>) => {
-            setTerapi(e.target.value)
+            setTerapiTambah(e.target.value)
           }}
         />
       </Form>
@@ -79,7 +78,7 @@ const ModalTambahPasien = ({ getDetailPasien, id }: ModalTambahPasienProps) => {
         <label
           htmlFor="modal-tambah"
           className="btn btn-primary btn-sm"
-          onClick={addDetail}
+          onClick={tambahDetail}
         >
           Tambah Data
         </label>
