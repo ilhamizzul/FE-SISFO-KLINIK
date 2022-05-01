@@ -373,7 +373,7 @@ const DetailPemeriksaan = () => {
           <Link
             href={{
               pathname: `/pasien/${id}/[slug]`,
-              query: { slug: 'invoice', data: idPemeriksaan },
+              query: { slug: 'invoice', idPemeriksaan: idPemeriksaan },
             }}
             passHref
           >
