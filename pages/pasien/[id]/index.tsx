@@ -15,7 +15,6 @@ import Modal from '../../../components/Modal'
 import ModalAction from '../../../components/ModalAction'
 import ModalHapusPemeriksaan from '../../../components/ModalHapusPemeriksaan'
 import ModalTambahPemeriksaan from '../../../components/ModalTambahPemeriksaan'
-import ModalUbahPemeriksaan from '../../../components/ModalUbahPemeriksaan'
 import PageTitle from '../../../components/PageTitle'
 import SectionTitle from '../../../components/SectionTitle'
 import {
