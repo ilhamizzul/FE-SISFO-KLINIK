@@ -7,18 +7,17 @@ import ModalAction from '../../components/ModalAction'
 import PageTitle from '../../components/PageTitle'
 import SectionTitle from '../../components/SectionTitle'
 import { Data } from '../../types/pasien'
-import { rupiah } from '../../utils/formatRupiah'
 
-const Recycle = () => {
+const RecyclePasien = () => {
   const [data, setData] = useState<[]>()
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [currentPage, setCurrentPage] = useState<number>(0)
-  const [idObat, setIdObat] = useState<number>()
+  const [idPemeriksaan, setIdPemeriksaan] = useState<number>()
 
-  const getObatRecycle = async () => {
+  const getDataRecycle = async () => {
     try {
       const res = await axios(
-        `${process.env.NEXT_PUBLIC_URL_HOST}/api/obat/sampah`
+        `${process.env.NEXT_PUBLIC_URL_HOST}/api/pasien/sampah`
       )
       setData(res.data.value)
       setIsLoading(false)
@@ -29,31 +28,33 @@ const Recycle = () => {
 
   const pagination = (tes: number) => {
     setCurrentPage(tes - 1)
-    getObatRecycle()
+    getDataRecycle()
   }
 
-  const activateObat = (id?: number) => {
+  const activatePasien = (id?: number) => {
     axios
-      .patch(`${process.env.NEXT_PUBLIC_URL_HOST}/api/obat/activated/${id}`)
+      .post(`${process.env.NEXT_PUBLIC_URL_HOST}/api/pasien/aktivasi`, {
+        Id: id,
+      })
       .then(() => {
-        getObatRecycle()
-        toast.success('Data Obat berhasil diaktifkan kembali!')
+        getDataRecycle()
+        toast.success('Data pasien berhasil diaktifkan kembali!')
       })
       .catch(() => {
-        getObatRecycle()
-        toast.error('Data Obat gagal diaktifkan!')
+        getDataRecycle()
+        toast.error('Data pasien gagal diaktifkan!')
       })
   }
 
   useEffect(() => {
-    getObatRecycle()
+    getDataRecycle()
   }, [])
 
   return (
     <>
-      <PageTitle>Recycle Bin Obat</PageTitle>
+      <PageTitle>Recycle Bin Pasien</PageTitle>
       <Layout>
-        <SectionTitle>Recycle Bin Obat</SectionTitle>
+        <SectionTitle>Recycle Bin Pasien</SectionTitle>
         <div className="mt-4">
           <div className="overflow-x-auto">
             <div className="overflow-x-auto">
@@ -61,10 +62,12 @@ const Recycle = () => {
                 <thead>
                   <tr>
                     <th />
-                    <th>Kode</th>
                     <th>Nama</th>
-                    <th>Harga Jual</th>
-                    <th>Stok</th>
+                    <th>Alamat</th>
+                    <th>Tempat Lahir</th>
+                    <th>Tanggal Lahir</th>
+                    <th>Kepala Keluarga</th>
+                    <th>Jenis Kelamin</th>
                     <th className="text-center">Aksi</th>
                   </tr>
                 </thead>
@@ -85,16 +88,22 @@ const Recycle = () => {
                           return (
                             <tr key={i}>
                               <th>{i + 1}</th>
-                              <td>{tes.Kode}</td>
-                              <td>{tes.Nama}</td>
-                              <td>{rupiah(tes.HargaJual)}</td>
-                              <td>{tes.Sisa}</td>
+                              <td>{tes.NamaPasien}</td>
+                              <td>{tes.Alamat}</td>
+                              <td>{tes.TempatLahir}</td>
+                              <td>{tes.TanggalLahir.substring(0, 10)}</td>
+                              <td>{tes.NamaKepalaKeluarga}</td>
+                              <td>
+                                {tes.JenisKelamin === 'L'
+                                  ? 'Laki-laki'
+                                  : 'Perempuan'}
+                              </td>
                               <td>
                                 <div className="flex items-center justify-center space-x-2">
                                   <label
                                     className="btn btn-secondary btn-xs"
                                     htmlFor={'modal-activate'}
-                                    onClick={() => setIdObat(tes.Id)}
+                                    onClick={() => setIdPemeriksaan(tes.Id)}
                                   >
                                     Aktivasi
                                   </label>
@@ -128,8 +137,8 @@ const Recycle = () => {
           </div>
         </div>
       </Layout>
-      <Modal title={'Aktifkan Data Obat'} id={'modal-activate'}>
-        <span>Yakin ingin mengaktifkan data obat?</span>
+      <Modal title={'Aktifkan Data Pasien'} id={'modal-activate'}>
+        <span>Yakin ingin mengaktifkan data pasien?</span>
         <ModalAction>
           <label htmlFor="modal-activate" className="btn btn-accent btn-sm">
             Kembali
@@ -137,7 +146,7 @@ const Recycle = () => {
           <label
             htmlFor="modal-activate"
             onClick={() => {
-              activateObat(idObat)
+              activatePasien(idPemeriksaan)
             }}
             className="btn btn-primary btn-sm"
           >
@@ -149,4 +158,4 @@ const Recycle = () => {
   )
 }
 
-export default Recycle
+export default RecyclePasien
