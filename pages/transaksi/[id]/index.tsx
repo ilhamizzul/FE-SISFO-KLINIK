@@ -23,10 +23,10 @@ const DetailTransaksi = () => {
   const [currentPage, setCurrentPage] = useState<number>(0)
   const [inputSearch, setInputSearch] = useState<string>('')
   const router = useRouter()
-  const { id, slug } = router.query
+  const { id, idPasien } = router.query
   const dispatch = useDispatch()
   const obatValue = useSelector(selectObatValue)
-
+  
   const getAllData = async () => {
     try {
       const res = await axios(`${process.env.NEXT_PUBLIC_URL_HOST}/api/obat`)
@@ -53,9 +53,10 @@ const DetailTransaksi = () => {
       RincianObat: data.Nama,
       Jumlah: 1,
       Harga: data.HargaJual,
-      Stok: data.Sisa,
+      // Stok: data.Sisa,
       IdObat: data.Id,
       IdPemeriksaan: parseInt(id as string),
+      // Id: data.Id
     }
 
     const index = obatValue.findIndex((obj) => {
@@ -70,13 +71,16 @@ const DetailTransaksi = () => {
   }
 
   const addTransaksi = () => {
+    console.log(obatValue);
+    console.log(id);
+    
     axios
       .post(
         `${process.env.NEXT_PUBLIC_URL_HOST}/api/transaksi/${id}`,
         obatValue
       )
       .then(() => {
-        router.push(`/pasien/${slug}`)
+        router.push(`/pasien/${idPasien}`)
         toast.success('Data berhasil ditambahkan!')
       })
       .catch((err) => {
@@ -110,7 +114,7 @@ const DetailTransaksi = () => {
 
   useEffect(() => {
     getAllData()
-  }, [])
+  }, [id])
 
   return (
     <>
@@ -227,7 +231,6 @@ const DetailTransaksi = () => {
                             </button>
                             <input
                               min={1}
-                              max={data.Stok}
                               className="input input-bordered input-sm w-10"
                               value={data.Jumlah}
                             />

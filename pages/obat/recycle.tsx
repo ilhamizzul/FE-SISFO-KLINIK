@@ -10,7 +10,7 @@ import { Data } from '../../types/pasien'
 import { rupiah } from '../../utils/formatRupiah'
 
 const RecycleObat = () => {
-  const [data, setData] = useState<[]>()
+  const [dataRecycleObat, setDataRecycleObat] = useState<[]>()
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [currentPage, setCurrentPage] = useState<number>(0)
   const [idObat, setIdObat] = useState<number>()
@@ -20,7 +20,7 @@ const RecycleObat = () => {
       const res = await axios(
         `${process.env.NEXT_PUBLIC_URL_HOST}/api/obat/sampah`
       )
-      setData(res.data.value)
+      setDataRecycleObat(res.data.value)
       setIsLoading(false)
     } catch (err) {
       console.log(err)
@@ -76,7 +76,7 @@ const RecycleObat = () => {
                       </td>
                     </tr>
                   ) : (
-                    data
+                    dataRecycleObat
                       ?.filter((page: Data) => {
                         return page.Pages == currentPage + 1
                       })
@@ -110,7 +110,7 @@ const RecycleObat = () => {
             </div>
           </div>
           <div className="btn-group mt-4">
-            {data?.map((page: Data, i: number) => {
+            {dataRecycleObat?.map((page: Data, i: number) => {
               return (
                 <>
                   <button

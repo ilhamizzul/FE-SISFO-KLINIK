@@ -1,10 +1,38 @@
+import axios from 'axios'
+import { is } from 'immer/dist/internal'
 import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
+import { DataNota, Obat } from '../../../types/pasien'
 import { rupiah } from '../../../utils/formatRupiah'
 
 const Invoice = () => {
   const router = useRouter()
-  const params = router.query
-  console.log(params)
+  const { id, data } = router.query
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [dataNota, setDataNota] = useState<DataNota>()
+  let sum: number = 0
+
+  console.log(id, data);
+  
+  const getNota = async () => {
+    try {
+      const res = await axios(
+        `${process.env.NEXT_PUBLIC_URL_HOST}/api/transaksi/${data}/${id}`
+      )
+      setDataNota(res.data.value.obat)
+      setIsLoading(false)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  useEffect(() => {
+    getNota()
+    const timer = setTimeout(() => {
+      window.print()
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [id, data])
 
   return (
     <div className="flex h-screen w-full flex-col items-center p-5">
@@ -26,26 +54,33 @@ const Invoice = () => {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td align="left" className="break-all">
-                  asdaaaaaaaaaaaaaaa
-                </td>
-                <td align="center">2</td>
-                <td align="right">{rupiah(5000)}</td>
-                <td align="right">{rupiah(10000)}</td>
-              </tr>
-              <tr>
-                <td align="left">asdaaaaaaaaaaaaaaa</td>
-                <td align="center">1</td>
-                <td align="right">{rupiah(10000)}</td>
-                <td align="right">{rupiah(10000)}</td>
-              </tr>
-              <tr>
-                <td align="left">asdaaaaaaaaaaaaaaa</td>
-                <td align="center">4</td>
-                <td align="right">{rupiah(2500)}</td>
-                <td align="right">{rupiah(10000)}</td>
-              </tr>
+              {isLoading ? (
+                <tr>
+                  <td colSpan={4} className={'text-center'}>
+                    Loading
+                  </td>
+                </tr>
+              ) : (
+                dataNota?.detail_obat.map((data: Obat, i: number) => {
+                  sum += data.HargaJual * dataNota.detail_transasksi[i].Jumlah
+                  return (
+                    <tr key={i}>
+                      <td align="left" className="break-all">
+                        {data.Nama}
+                      </td>
+                      <td align="center">
+                        {dataNota.detail_transasksi[i].Jumlah}
+                      </td>
+                      <td align="right">{rupiah(data.HargaJual)}</td>
+                      <td align="right">
+                        {rupiah(
+                          data.HargaJual * dataNota.detail_transasksi[i].Jumlah
+                        )}
+                      </td>
+                    </tr>
+                  )
+                })
+              )}
             </tbody>
           </table>
         </div>
@@ -54,7 +89,7 @@ const Invoice = () => {
             <thead>
               <tr>
                 <th align="left">Total</th>
-                <th align="right">{rupiah(40000)}</th>
+                <th align="right">{rupiah(sum)}</th>
               </tr>
             </thead>
           </table>

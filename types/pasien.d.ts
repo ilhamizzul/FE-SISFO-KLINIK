@@ -37,7 +37,8 @@ export type Transaksi = {
   RincianObat: String
   Jumlah: number
   Harga: number
-  Stok: number
+  // Stok: number
+  // Id: number
   IdObat: number
   IdPemeriksaan: number
 }
@@ -53,6 +54,6 @@ export type NotaObat = {
 }
 
 export type DataNota = {
-  obat: NotaObat[]
-  pasien: Pasien
+  detail_obat: Obat[]
+  detail_transasksi: Transaksi[]
 }

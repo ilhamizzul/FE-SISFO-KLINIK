@@ -22,7 +22,7 @@ import {
   Pasien,
   DetailPasien,
   DataNota,
-  NotaObat,
+  Obat,
 } from '../../../types/pasien'
 import { rupiah } from '../../../utils/formatRupiah'
 
@@ -40,6 +40,7 @@ const DetailPemeriksaan = () => {
   const [dataNota, setDataNota] = useState<DataNota>()
   const [_dataObat, setDataObat] = useState<Data[]>()
   const idPasien = id as string
+  const [idPemeriksaan, setIdPemeriksaan] = useState<number>(0)
 
   const getDetailPasien = async () => {
     try {
@@ -112,7 +113,8 @@ const DetailPemeriksaan = () => {
       `https://apis-klinik.fanzru.dev/api/transaksi/${data.Id}/${data.IdPasien}`
     )
       .then((res) => {
-        setDataNota(res.data.value)
+        setDataNota(res.data.value.obat)
+        setIdPemeriksaan(data.Id)
       })
       .catch((err) => console.log(err))
   }
@@ -331,26 +333,34 @@ const DetailPemeriksaan = () => {
                 <th>Rincian Obat</th>
                 <th align="center">Jumlah Obat</th>
                 <th>Harga</th>
+                <th>Total</th>
               </tr>
             </thead>
             <tbody>
-              {dataNota?.obat.map((data: NotaObat, i: number) => {
-                // let obat = allObat.find((elemen) => elemen.Id == data.IdObat)
+              {dataNota?.detail_obat.map((data: Obat, i: number) => {
+                sum += data.HargaJual * dataNota.detail_transasksi[i].Jumlah
 
-                sum += data.Harga
+                console.log(data.Id)
 
                 return (
                   <tr key={i}>
-                    <td>{}</td>
-                    <td>{data.RincianObat}</td>
-                    <td align="center">{data.Jumlah}</td>
-                    <td>{rupiah(data.Harga)}</td>
+                    <td>{data.Nama}</td>
+                    <td>{dataNota.detail_transasksi[i].RincianObat}</td>
+                    <td align="center">
+                      {dataNota.detail_transasksi[i].Jumlah}
+                    </td>
+                    <td>{rupiah(data.HargaJual)}</td>
+                    <td>
+                      {rupiah(
+                        data.HargaJual * dataNota.detail_transasksi[i].Jumlah
+                      )}
+                    </td>
                   </tr>
                 )
               })}
               <tr>
                 <td className="font-bold">Total Harga : </td>
-                <td colSpan={2}></td>
+                <td colSpan={3}></td>
                 <td className="font-bold">{rupiah(sum)}</td>
               </tr>
             </tbody>
@@ -362,8 +372,8 @@ const DetailPemeriksaan = () => {
           </label>
           <Link
             href={{
-              pathname: `/pasien/${id}/invoice`,
-              query: { tes: 'asd' },
+              pathname: `/pasien/${id}/[slug]`,
+              query: { slug: 'invoice', data: idPemeriksaan },
             }}
             passHref
           >
