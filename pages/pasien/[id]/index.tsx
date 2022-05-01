@@ -14,6 +14,7 @@ import Layout from '../../../components/Layout'
 import Modal from '../../../components/Modal'
 import ModalAction from '../../../components/ModalAction'
 import ModalTambahPasien from '../../../components/ModalTambahPasien'
+import ModalUbahPasien from '../../../components/ModalUbahPasien'
 import PageTitle from '../../../components/PageTitle'
 import SectionTitle from '../../../components/SectionTitle'
 import {
@@ -71,34 +72,6 @@ const DetailPemeriksaan = () => {
     }
   }
 
-  const editDetail = () => {
-    const date = new Date().toISOString()
-
-    axios
-      .post(`${process.env.NEXT_PUBLIC_URL_HOST}/api/pemeriksaan/edit`, {
-        TanggalPemeriksaan: date,
-        HasilPemeriksaan: hasilPemeriksaan,
-        Diagnosis: diagnosis,
-        Terapi: terapi,
-        Id: idDetail,
-      })
-      .then(() => {
-        getDetailPasien()
-        toast.success('Data berhasil diubah!')
-        setHasilPemeriksaan('')
-        setDiagnosis('')
-        setTerapi('')
-      })
-      .catch((err) => {
-        getDetailPasien()
-        toast.error('Data gagal diubah!')
-        console.log(err)
-        setHasilPemeriksaan('')
-        setDiagnosis('')
-        setTerapi('')
-      })
-  }
-
   const handleEdit = (data: DetailPasien) => {
     setIdDetail(data.Id)
     setHasilPemeriksaan(data.HasilPemeriksaan)
@@ -135,8 +108,6 @@ const DetailPemeriksaan = () => {
     setCurrentPage(tes - 1)
   }
 
-  
-  
   let allData: Array<object> = []
 
   detailPasien?.map((page: Data) => {
@@ -296,50 +267,7 @@ const DetailPemeriksaan = () => {
         </div>
       </Layout>
       <ModalTambahPasien getDetailPasien={getDetailPasien} id={idPasien} />
-      <Modal title={'Ubah Data Pasien'} id={'modal-edit'}>
-        <Form>
-          <LabelForm>Hasil Pemeriksaan</LabelForm>
-          <Input
-            value={hasilPemeriksaan}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              setHasilPemeriksaan(e.target.value)
-            }}
-          />
-        </Form>
-        <Form>
-          <LabelForm>Diagnosis</LabelForm>
-          <Input
-            value={diagnosis}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              setDiagnosis(e.target.value)
-            }}
-          />
-        </Form>
-        <Form>
-          <LabelForm>Terapi</LabelForm>
-          <Input
-            value={terapi}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              setTerapi(e.target.value)
-            }}
-          />
-        </Form>
-
-        <ModalAction>
-          <label htmlFor="modal-edit" className="btn btn-accent btn-sm">
-            Kembali
-          </label>
-          <label
-            htmlFor="modal-edit"
-            className="btn btn-primary btn-sm"
-            onClick={() => {
-              editDetail()
-            }}
-          >
-            Edit Data
-          </label>
-        </ModalAction>
-      </Modal>
+      <ModalUbahPasien getDetailPasien={getDetailPasien} id={idPasien} />
       <Modal title={'Hapus Data Pasien'} id={'modal-hapus'}>
         <span>Yakin ingin menghapus data pasien?</span>
         <ModalAction>
