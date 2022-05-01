@@ -9,7 +9,7 @@ import SectionTitle from '../../components/SectionTitle'
 import { Data } from '../../types/pasien'
 import { rupiah } from '../../utils/formatRupiah'
 
-const RecycleObat = () => {
+const RecycleObatPage = () => {
   const [data, setData] = useState<[]>()
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [currentPage, setCurrentPage] = useState<number>(0)
@@ -51,9 +51,9 @@ const RecycleObat = () => {
 
   return (
     <>
-      <PageTitle>Recycle Bin</PageTitle>
+      <PageTitle>Recycle Bin Obat</PageTitle>
       <Layout>
-        <SectionTitle>Recycle Bin</SectionTitle>
+        <SectionTitle>Recycle Bin Obat</SectionTitle>
         <div className="mt-4">
           <div className="overflow-x-auto">
             <div className="overflow-x-auto">
@@ -149,4 +149,4 @@ const RecycleObat = () => {
   )
 }
 
-export default RecycleObat
+export default RecycleObatPage

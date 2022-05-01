@@ -1,7 +1,6 @@
 import axios from 'axios'
-import Link from 'next/link'
 import { ChangeEvent, useEffect, useState } from 'react'
-import { HiEye, HiPencilAlt, HiTrash } from 'react-icons/hi'
+import { HiPencilAlt, HiTrash } from 'react-icons/hi'
 import { toast } from 'react-toastify'
 
 import Form from '../../components/Form'

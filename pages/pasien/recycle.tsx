@@ -52,9 +52,9 @@ const RecyclePasien = () => {
 
   return (
     <>
-      <PageTitle>Recycle Bin</PageTitle>
+      <PageTitle>Recycle Bin Pasien</PageTitle>
       <Layout>
-        <SectionTitle>Recycle Bin</SectionTitle>
+        <SectionTitle>Recycle Bin Pasien</SectionTitle>
         <div className="mt-4">
           <div className="overflow-x-auto">
             <div className="overflow-x-auto">
