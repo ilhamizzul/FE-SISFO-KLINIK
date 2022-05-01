@@ -64,8 +64,8 @@ const Recycle = () => {
                     <th />
                     <th>Nama</th>
                     <th>Alamat</th>
-                    <th>Tempat Lahir</th>
                     <th>Tanggal Lahir</th>
+                    <th>Tempat Lahir</th>
                     <th>Kepala Keluarga</th>
                     <th>Jenis Kelamin</th>
                     <th className="text-center">Aksi</th>
@@ -90,8 +90,8 @@ const Recycle = () => {
                               <th>{i + 1}</th>
                               <td>{tes.NamaPasien}</td>
                               <td>{tes.Alamat}</td>
-                              <td>{tes.TempatLahir}</td>
                               <td>{tes.TanggalLahir.substring(0, 10)}</td>
+                              <td>{tes.TempatLahir}</td>
                               <td>{tes.NamaKepalaKeluarga}</td>
                               <td>
                                 {tes.JenisKelamin === 'L'
